@@ -28,12 +28,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .matrix-section{background:#fff;border-radius:12px;border:1px solid #e5e5e5;padding:1rem;margin-bottom:1rem}
 .matrix-outer{display:flex;gap:4px;align-items:stretch}
 .y-label-txt{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;color:#888;letter-spacing:0.05em;white-space:nowrap;text-align:center;padding-right:2px}
-.y-ticks{display:flex;flex-direction:column;justify-content:space-around;height:360px;text-align:right;margin-right:6px}
+.y-ticks{display:flex;flex-direction:column;justify-content:space-around;height:520px;text-align:right;margin-right:6px}
 .y-tick{font-size:9px;color:#bbb;white-space:nowrap}
 .matrix-wrap{flex:1}
 .x-labels{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:4px}
 .x-label{text-align:center;font-size:10px;color:#888}
-.matrix{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:4px;height:360px}
+.matrix{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:4px;height:520px}
 .cell{border-radius:8px;border:1px solid #e5e5e5;padding:8px;display:flex;flex-direction:column;overflow:hidden}
 .cell-label{font-size:10px;font-weight:600;margin-bottom:2px;text-transform:uppercase}
 .cell-hint{font-size:9px;opacity:0.5;margin-bottom:4px}
@@ -56,6 +56,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .x-bottom{display:grid;grid-template-columns:repeat(3,1fr);margin-top:4px}
 .detail-panel{background:#fff;border-radius:12px;border:1px solid #e5e5e5;padding:1.25rem;margin-bottom:1rem;display:none}
 .detail-panel.open{display:block}
+.cell-panel{background:#fff;border-radius:12px;border:1px solid #e5e5e5;padding:1.25rem;margin-bottom:1rem;display:none}
+.cell-panel.open{display:block}
+.cell-summary{font-size:13px;line-height:1.65;color:#333;background:#f8f8f8;border:1px solid #eee;border-radius:8px;padding:12px;margin-top:10px}
+.cell-stock-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.cell-stock{border:1px solid #eee;border-radius:8px;padding:9px 10px;background:#fff;cursor:pointer}
+.cell-stock:hover{background:#fafafa}
+.cell-stock-top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px}
+.cell-stock-ticker{font-size:12px;font-weight:700}
+.cell-stock-score{font-size:10px;color:#888;text-align:right}
+.cell-stock-note{font-size:11px;line-height:1.45;color:#666}
 .detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .detail-title{font-size:16px;font-weight:500}
 .detail-close{cursor:pointer;color:#bbb;font-size:22px}
@@ -80,6 +90,26 @@ tr:last-child td{border-bottom:none}
 tr.row{cursor:pointer}
 tr.row:hover td{background:#f8f8f8}
 .field-lbl{font-size:11px;color:#666;margin-bottom:3px}
+.picks-section{background:#fff;border-radius:12px;border:1px solid #e5e5e5;margin-bottom:1rem;overflow:hidden}
+.picks-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid #eee}
+.picks-title{font-size:14px;font-weight:600}
+.picks-subtitle{font-size:11px;color:#888;margin-top:2px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab-btn{font-size:11px;padding:5px 10px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#666;cursor:pointer}
+.tab-btn.active{background:#111;color:#fff;border-color:#111}
+.picks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px}
+.pick-card{border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;background:#fff;min-width:0}
+.pick-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:9px 10px;border-bottom:1px solid #eee}
+.pick-symbol{font-size:13px;font-weight:700}
+.pick-name{font-size:10px;color:#888;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
+.pick-score{text-align:right;font-size:10px;color:#666;white-space:nowrap}
+.pick-reason{padding:8px 10px;border-top:1px solid #eee;font-size:11px;line-height:1.45;color:#555;background:#fff}
+.pick-reason b{font-size:10px;color:#888;font-weight:600}
+.chart-frame{width:100%;height:220px;border:0;display:block}
+.chart-empty{height:220px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;background:#fafafa;text-align:center;padding:12px}
+.chart-link{display:block;padding:7px 10px;border-top:1px solid #eee;color:#666;text-decoration:none;font-size:11px;background:#fafafa}
+.chart-link:hover{color:#111;background:#f3f3f3}
+@media(max-width:760px){body{padding:1rem}.stats-row,.picks-grid,.cell-stock-list{grid-template-columns:1fr}.matrix{height:430px}.chart-frame,.chart-empty{height:260px}}
 </style>
 </head>
 <body>
@@ -103,28 +133,52 @@ tr.row:hover td{background:#f8f8f8}
 
 <div class="stats-row" id="stats-row"></div>
 
+<div class="picks-section">
+  <div class="picks-head">
+    <div>
+      <div class="picks-title">Follow-up Top 3</div>
+      <div class="picks-subtitle" id="picks-subtitle">크게 움직인 주도주를 팔로우하다가 눌림목을 기다리는 후보</div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-pullback" onclick="setPickTab('pullback')">눌림목 후보</button>
+      <button class="tab-btn" id="tab-avoid" onclick="setPickTab('avoid')">사지 말 것</button>
+      <button class="tab-btn" id="tab-patience" onclick="setPickTab('patience')">좋지만 기다림</button>
+    </div>
+  </div>
+  <div class="picks-grid" id="picks-grid"></div>
+</div>
+
 <div class="matrix-section">
   <div class="matrix-outer">
-    <div class="y-label-txt">← 가격 →</div>
+    <div class="y-label-txt">← 진입 매력 →</div>
     <div class="y-ticks">
-      <div class="y-tick">SHIT PRICE ▲</div>
-      <div class="y-tick">MID PRICE</div>
-      <div class="y-tick">▼ GOOD PRICE</div>
+      <div class="y-tick">LOW DESIRE ▲</div>
+      <div class="y-tick">WATCH ZONE</div>
+      <div class="y-tick">▼ HIGH DESIRE</div>
     </div>
     <div class="matrix-wrap">
       <div class="x-labels">
-        <div class="x-label">GOOD COMPANY</div>
-        <div class="x-label">MID COMPANY</div>
-        <div class="x-label">SHIT COMPANY</div>
+        <div class="x-label">HIGH MAGNETISM</div>
+        <div class="x-label">SOLID STORY</div>
+        <div class="x-label">WEAK PULL</div>
       </div>
       <div class="matrix" id="matrix"></div>
       <div class="x-bottom">
-        <div style="font-size:9px;color:#bbb;padding-left:4px">← Good</div>
+        <div style="font-size:9px;color:#bbb;padding-left:4px">← Wanted</div>
         <div style="font-size:9px;color:#bbb;text-align:center">Mid</div>
-        <div style="font-size:9px;color:#bbb;text-align:right;padding-right:4px">Shit →</div>
+        <div style="font-size:9px;color:#bbb;text-align:right;padding-right:4px">Ignored →</div>
       </div>
     </div>
   </div>
+</div>
+
+<div class="cell-panel" id="cell-panel">
+  <div class="detail-header">
+    <div class="detail-title" id="cell-title"></div>
+    <div class="detail-close" onclick="closeCellDetail()">×</div>
+  </div>
+  <div class="cell-summary" id="cell-summary"></div>
+  <div class="cell-stock-list" id="cell-stock-list"></div>
 </div>
 
 <div class="detail-panel" id="detail-panel">
@@ -133,35 +187,35 @@ tr.row:hover td{background:#f8f8f8}
     <div class="detail-close" onclick="closeDetail()">×</div>
   </div>
   <div class="score-bar-wrap">
-    <div class="score-label"><span>퀄리티 스코어</span><span id="q-val">—</span></div>
+    <div class="score-label"><span>종목 매력도</span><span id="q-val">—</span></div>
     <div class="score-track"><div class="score-fill" id="q-bar" style="width:0%;background:#3B6D11"></div></div>
   </div>
   <div class="score-bar-wrap">
-    <div class="score-label"><span>가격 스코어 (높을수록 저평가)</span><span id="p-val">—</span></div>
+    <div class="score-label"><span>진입 매력도</span><span id="p-val">—</span></div>
     <div class="score-track"><div class="score-fill" id="p-bar" style="width:0%;background:#185FA5"></div></div>
   </div>
   <div class="ai-box" id="ai-box">분석 없음</div>
   <div class="override-row">
     <div>
-      <div class="field-lbl">퀄리티 수동 조정</div>
+      <div class="field-lbl">종목 매력 수동 조정</div>
       <div class="seg" id="seg-q">
-        <div class="seg-btn" onclick="seg('q','great')">Great</div>
-        <div class="seg-btn" onclick="seg('q','good')">Good</div>
-        <div class="seg-btn" onclick="seg('q','shit')">Shit</div>
+        <div class="seg-btn" data-val="great" onclick="seg('q','great')">Wanted</div>
+        <div class="seg-btn" data-val="good" onclick="seg('q','good')">Solid</div>
+        <div class="seg-btn" data-val="shit" onclick="seg('q','shit')">Weak</div>
       </div>
     </div>
     <div>
-      <div class="field-lbl">가격 수동 조정</div>
+      <div class="field-lbl">진입 매력 수동 조정</div>
       <div class="seg" id="seg-p">
-        <div class="seg-btn" onclick="seg('p','great')">Great</div>
-        <div class="seg-btn" onclick="seg('p','good')">Good</div>
-        <div class="seg-btn" onclick="seg('p','shit')">Shit</div>
+        <div class="seg-btn" data-val="great" onclick="seg('p','great')">High</div>
+        <div class="seg-btn" data-val="good" onclick="seg('p','good')">Watch</div>
+        <div class="seg-btn" data-val="shit" onclick="seg('p','shit')">Low</div>
       </div>
     </div>
   </div>
   <div class="oa-actions">
     <button class="oa-btn" onclick="saveOverride()">저장</button>
-    <button class="oa-btn" onclick="resetOverride()">AI 결과로 리셋</button>
+    <button class="oa-btn" onclick="resetOverride()">분류 리셋</button>
     <button class="oa-del" onclick="deleteStock()">삭제</button>
   </div>
 </div>
@@ -170,7 +224,7 @@ tr.row:hover td{background:#f8f8f8}
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>티커</th><th>회사명</th><th>섹터</th><th>Q점수</th><th>P점수</th><th>퀄리티</th><th>가격</th><th>액션</th>
+        <th>티커</th><th>회사명</th><th>섹터</th><th>매력</th><th>진입</th><th>종목</th><th>상황</th><th>액션</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -179,126 +233,245 @@ tr.row:hover td{background:#f8f8f8}
 </div>
 
 <script>
-const CLAUDE_KEY = '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';
-
-// Y축 위→아래: shit price → mid price → good price
-// X축 왼→오:  good company → mid company → shit company
+// Y축 위→아래: low entry appeal → watch zone → high entry appeal
+// X축 왼→오:  high stock magnetism → solid story → weak buyer pull
 const CELLS = [
-  {q:'great',p:'shit', cls:'patience',  label:'Patience',   hint:'Wait for drop'},
-  {q:'good', p:'shit', cls:'neutral',   label:'Overpriced', hint:'Good co, bad price'},
-  {q:'shit', p:'shit', cls:'avoid',     label:'Avoid',      hint:'The worst'},
-  {q:'great',p:'good', cls:'strong-buy',label:'Strong buy', hint:'Almost jackpot'},
-  {q:'good', p:'good', cls:'hold-good', label:'Hold',       hint:'Fair value'},
-  {q:'shit', p:'good', cls:'avoid',     label:'Avoid',      hint:'Bad company'},
-  {q:'great',p:'great',cls:'jackpot',   label:'Jackpot',    hint:'Buy aggressively'},
-  {q:'good', p:'great',cls:'strong-buy',label:'Buy',        hint:'Undervalued'},
-  {q:'shit', p:'great',cls:'neutral',   label:'Trap',       hint:'Cheap for reason'},
+  {q:'great',p:'shit', cls:'patience',  label:'Patience',   hint:'Wanted, but crowded'},
+  {q:'good', p:'shit', cls:'neutral',   label:'No rush',    hint:'Needs better setup'},
+  {q:'shit', p:'shit', cls:'avoid',     label:'Avoid',      hint:'No buyer pull'},
+  {q:'great',p:'good', cls:'strong-buy',label:'Core buy',   hint:'Demand still works'},
+  {q:'good', p:'good', cls:'hold-good', label:'Hold/scale', hint:'Balanced setup'},
+  {q:'shit', p:'good', cls:'neutral',   label:'Spec watch', hint:'Needs catalyst'},
+  {q:'great',p:'great',cls:'jackpot',   label:'Magnet',     hint:'Buyers want more'},
+  {q:'good', p:'great',cls:'strong-buy',label:'Accum',      hint:'Good setup'},
+  {q:'shit', p:'great',cls:'neutral',   label:'Turnaround', hint:'Cheap needs proof'},
 ];
 const ACTION_MAP = {jackpot:'buy','strong-buy':'buy','hold-good':'hold',patience:'watch',neutral:'watch',avoid:'avoid'};
 const CHIP_CLS   = {buy:'chip-buy',hold:'chip-hold',watch:'chip-watch',avoid:'chip-avoid'};
 
 let stocks = [
-  {id:1, ticker:'CEG', name:'Constellation Energy',   sector:'Nuclear'},
-  {id:2, ticker:'CCJ', name:'Cameco',                 sector:'Nuclear'},
-  {id:3, ticker:'OKLO',name:'Oklo',                   sector:'Nuclear'},
-  {id:4, ticker:'LEU', name:'Centrus Energy',          sector:'Nuclear'},
-  {id:5, ticker:'UEC', name:'Uranium Energy',          sector:'Nuclear'},
-  {id:6, ticker:'SMR', name:'NuScale Power',           sector:'Nuclear'},
-  {id:7, ticker:'NNE', name:'Nano Nuclear',            sector:'Nuclear'},
-  {id:8, ticker:'DNN', name:'Denison Mines',           sector:'Nuclear'},
-  {id:9, ticker:'UUUU',name:'Energy Fuels',            sector:'Nuclear'},
-  {id:10,ticker:'URA', name:'Global X Uranium ETF',    sector:'Nuclear'},
-  {id:11,ticker:'URNM',name:'Sprott Uranium ETF',      sector:'Nuclear'},
-  {id:12,ticker:'GEV', name:'GE Vernova',              sector:'Power'},
-  {id:13,ticker:'BE',  name:'Bloom Energy',            sector:'Power'},
-  {id:14,ticker:'WULF',name:'TeraWulf',                sector:'Power'},
-  {id:15,ticker:'NBIS',name:'Nebius',                  sector:'AI Infra'},
-  {id:16,ticker:'APD', name:'Air Products',            sector:'H2/Gas'},
-  {id:17,ticker:'LIN', name:'Linde',                   sector:'H2/Gas'},
-  {id:18,ticker:'LITE',name:'Lumentum',                sector:'Photonics'},
-  {id:19,ticker:'COHR',name:'Coherent',                sector:'Photonics'},
-  {id:20,ticker:'MRVL',name:'Marvell Technology',      sector:'Semis'},
-  {id:21,ticker:'FN',  name:'Fabrinet',                sector:'Photonics'},
-  {id:22,ticker:'MTSI',name:'MACOM Technology',        sector:'Photonics'},
-  {id:23,ticker:'MKSI',name:'MKS Instruments',         sector:'Photonics'},
-  {id:24,ticker:'IPGP',name:'IPG Photonics',           sector:'Photonics'},
-  {id:25,ticker:'AAOI',name:'Applied Optoelectronics', sector:'Photonics'},
-  {id:26,ticker:'NVDA',name:'Nvidia',                  sector:'AI Infra'},
-  {id:27,ticker:'INTC',name:'Intel',                   sector:'Semis'},
-  {id:28,ticker:'ORCL',name:'Oracle',                  sector:'AI Infra'},
-  {id:29,ticker:'AVGO',name:'Broadcom',                sector:'AI Infra'},
-  {id:30,ticker:'VRT', name:'Vertiv',                  sector:'AI Infra'},
-  {id:31,ticker:'APH', name:'Amphenol',                sector:'Connect'},
-  {id:32,ticker:'DELL',name:'Dell Technologies',       sector:'AI Infra'},
-  {id:33,ticker:'CRDO',name:'Credo Semiconductor',     sector:'Semis'},
-  {id:34,ticker:'EME', name:'EMCOR Group',             sector:'AI Infra'},
-  {id:35,ticker:'FCX', name:'Freeport-McMoRan',        sector:'Materials'},
-  {id:36,ticker:'SCCO',name:'Southern Copper',         sector:'Materials'},
-  {id:37,ticker:'MP',  name:'MP Materials',            sector:'Materials'},
-  {id:38,ticker:'AA',  name:'Alcoa',                   sector:'Materials'},
-  {id:39,ticker:'TECK',name:'Teck Resources',          sector:'Materials'},
-  {id:40,ticker:'LAC', name:'Lithium Americas',        sector:'Materials'},
-  {id:41,ticker:'BHP', name:'BHP Group',               sector:'Materials'},
-  {id:42,ticker:'SBSW',name:'Sibanye Stillwater',      sector:'Materials'},
-  {id:43,ticker:'VAL', name:'Valaris',                 sector:'Oil Svcs'},
-  {id:44,ticker:'XPRO',name:'Expro Group',             sector:'Oil Svcs'},
-  {id:45,ticker:'PALL',name:'abrdn Palladium ETF',     sector:'ETF'},
+  {id:1, ticker:"NVDA", name:"Nvidia", sector:"AI Infra", region:"US"},
+  {id:2, ticker:"AVGO", name:"Broadcom", sector:"AI Infra", region:"US"},
+  {id:3, ticker:"INTC", name:"Intel", sector:"Semis", region:"US"},
+  {id:4, ticker:"CRDO", name:"Credo Semiconductor", sector:"Semis", region:"US"},
+  {id:5, ticker:"MRVL", name:"Marvell Technology", sector:"Semis", region:"US"},
+  {id:6, ticker:"AMD", name:"Advanced Micro Devices", sector:"Semis", region:"US"},
+  {id:7, ticker:"TSM", name:"TSMC", sector:"Semis", region:"US"},
+  {id:8, ticker:"AMAT", name:"Applied Materials", sector:"Semis", region:"US"},
+  {id:9, ticker:"KLAC", name:"KLA", sector:"Semis", region:"US"},
+  {id:10, ticker:"ARM", name:"Arm Holdings", sector:"Semis", region:"US"},
+  {id:11, ticker:"ALAB", name:"Astera Labs", sector:"Semis", region:"US"},
+  {id:12, ticker:"ANET", name:"Arista Networks", sector:"AI Infra", region:"US"},
+  {id:13, ticker:"LRCX", name:"Lam Research", sector:"Semis", region:"US"},
+  {id:14, ticker:"ON", name:"ON Semiconductor", sector:"Semis", region:"US"},
+  {id:15, ticker:"SNDK", name:"SanDisk", sector:"Storage", region:"US"},
+  {id:16, ticker:"MU", name:"Micron", sector:"Memory", region:"US"},
+  {id:17, ticker:"LITE", name:"Lumentum", sector:"Photonics", region:"US"},
+  {id:18, ticker:"COHR", name:"Coherent", sector:"Photonics", region:"US"},
+  {id:19, ticker:"AAOI", name:"Applied Optoelectronics", sector:"Photonics", region:"US"},
+  {id:20, ticker:"FN", name:"Fabrinet", sector:"Photonics", region:"US"},
+  {id:21, ticker:"MTSI", name:"MACOM Technology", sector:"Photonics", region:"US"},
+  {id:22, ticker:"MKSI", name:"MKS Instruments", sector:"Photonics", region:"US"},
+  {id:23, ticker:"IPGP", name:"IPG Photonics", sector:"Photonics", region:"US"},
+  {id:24, ticker:"NBIS", name:"Nebius", sector:"AI Infra", region:"US"},
+  {id:25, ticker:"ORCL", name:"Oracle", sector:"AI Infra", region:"US"},
+  {id:26, ticker:"VRT", name:"Vertiv", sector:"AI Infra", region:"US"},
+  {id:27, ticker:"EME", name:"EMCOR Group", sector:"AI Infra", region:"US"},
+  {id:28, ticker:"DELL", name:"Dell Technologies", sector:"AI Infra", region:"US"},
+  {id:29, ticker:"CEG", name:"Constellation Energy", sector:"Nuclear", region:"US"},
+  {id:30, ticker:"CCJ", name:"Cameco", sector:"Nuclear", region:"US"},
+  {id:31, ticker:"OKLO", name:"Oklo", sector:"Nuclear", region:"US"},
+  {id:32, ticker:"LEU", name:"Centrus Energy", sector:"Nuclear", region:"US"},
+  {id:33, ticker:"UEC", name:"Uranium Energy", sector:"Nuclear", region:"US"},
+  {id:34, ticker:"SMR", name:"NuScale Power", sector:"Nuclear", region:"US"},
+  {id:35, ticker:"NNE", name:"Nano Nuclear", sector:"Nuclear", region:"US"},
+  {id:36, ticker:"DNN", name:"Denison Mines", sector:"Nuclear", region:"US"},
+  {id:37, ticker:"UUUU", name:"Energy Fuels", sector:"Nuclear", region:"US"},
+  {id:38, ticker:"URA", name:"Global X Uranium ETF", sector:"ETF", region:"US"},
+  {id:39, ticker:"URNM", name:"Sprott Uranium ETF", sector:"ETF", region:"US"},
+  {id:40, ticker:"GEV", name:"GE Vernova", sector:"Power", region:"US"},
+  {id:41, ticker:"BE", name:"Bloom Energy", sector:"Power", region:"US"},
+  {id:42, ticker:"WULF", name:"TeraWulf", sector:"Power", region:"US"},
+  {id:43, ticker:"APD", name:"Air Products", sector:"H2/Gas", region:"US"},
+  {id:44, ticker:"LIN", name:"Linde", sector:"H2/Gas", region:"US"},
+  {id:45, ticker:"FCX", name:"Freeport-McMoRan", sector:"Materials", region:"US"},
+  {id:46, ticker:"SCCO", name:"Southern Copper", sector:"Materials", region:"US"},
+  {id:47, ticker:"MP", name:"MP Materials", sector:"Materials", region:"US"},
+  {id:48, ticker:"AA", name:"Alcoa", sector:"Materials", region:"US"},
+  {id:49, ticker:"TECK", name:"Teck Resources", sector:"Materials", region:"US"},
+  {id:50, ticker:"LAC", name:"Lithium Americas", sector:"Materials", region:"US"},
+  {id:51, ticker:"BHP", name:"BHP Group", sector:"Materials", region:"US"},
+  {id:52, ticker:"SBSW", name:"Sibanye Stillwater", sector:"Materials", region:"US"},
+  {id:53, ticker:"VAL", name:"Valaris", sector:"Oil Svcs", region:"US"},
+  {id:54, ticker:"XPRO", name:"Expro Group", sector:"Oil Svcs", region:"US"},
+  {id:55, ticker:"APH", name:"Amphenol", sector:"Connect", region:"US"},
+  {id:56, ticker:"PALL", name:"abrdn Palladium ETF", sector:"ETF", region:"US"},
+  {id:57, ticker:"POET", name:"POET Technologies", sector:"Photonics", region:"US"},
+  {id:58, ticker:"SOXL", name:"Direxion Semiconductor 3x ETF", sector:"ETF", region:"US"},
+  {id:59, ticker:"TQQQ", name:"ProShares UltraPro QQQ", sector:"ETF", region:"US"},
+  {id:60, ticker:"VICR", name:"Vicor", sector:"Power", region:"US"},
+  {id:61, ticker:"FORM", name:"FormFactor", sector:"Semis", region:"US"},
+  {id:62, ticker:"ENTG", name:"Entegris", sector:"Semis", region:"US"},
+  {id:63, ticker:"QLD", name:"ProShares Ultra QQQ", sector:"ETF", region:"US"},
+  {id:64, ticker:"GLW", name:"Corning", sector:"Photonics", region:"US"},
+  {id:65, ticker:"VIAV", name:"Viavi Solutions", sector:"Photonics", region:"US"},
+  {id:66, ticker:"AMZN", name:"Amazon", sector:"Mega Tech", region:"US"},
+  {id:67, ticker:"GOOG", name:"Alphabet", sector:"Mega Tech", region:"US"},
+  {id:68, ticker:"PLTR", name:"Palantir", sector:"AI Software", region:"US"},
+  {id:69, ticker:"CIEN", name:"Ciena", sector:"Networking", region:"US"},
+  {id:70, ticker:"TSLA", name:"Tesla", sector:"EV/AI", region:"US"},
+  {id:71, ticker:"AEHR", name:"Aehr Test Systems", sector:"Semis", region:"US"},
+  {id:72, ticker:"GFS", name:"GlobalFoundries", sector:"Semis", region:"US"},
+  {id:73, ticker:"JEPQ", name:"JPMorgan Nasdaq Equity Premium ETF", sector:"ETF", region:"US"},
+  {id:74, ticker:"VALE", name:"Vale", sector:"Materials", region:"US"},
+  {id:75, ticker:"KEYS", name:"Keysight Technologies", sector:"Semis", region:"US"},
+  {id:76, ticker:"TSEM", name:"Tower Semiconductor", sector:"Semis", region:"US"},
+  {id:77, ticker:"JEPI", name:"JPMorgan Equity Premium ETF", sector:"ETF", region:"US"},
+  {id:78, ticker:"IONQ", name:"IonQ", sector:"Quantum", region:"US"},
+  {id:79, ticker:"AREC", name:"American Resources", sector:"Materials", region:"US"},
+  {id:80, ticker:"TMC", name:"TMC the metals company", sector:"Materials", region:"US"},
+  {id:81, ticker:"CIFR", name:"Cipher Mining", sector:"Crypto Infra", region:"US"},
+  {id:82, ticker:"CRWV", name:"CoreWeave", sector:"AI Infra", region:"US"},
+  {id:83, ticker:"USAR", name:"USA Rare Earth", sector:"Materials", region:"US"},
+  {id:84, ticker:"CRML", name:"Critical Metals", sector:"Materials", region:"US"},
+  {id:85, ticker:"ALOY", name:"Alloy", sector:"Materials", region:"US"},
+  {id:86, ticker:"UMC", name:"United Microelectronics", sector:"Semis", region:"US"},
+  {id:87, ticker:"NB", name:"NioCorp", sector:"Materials", region:"US"},
+  {id:88, ticker:"PBR", name:"Petrobras", sector:"Energy", region:"US"},
+  {id:89, ticker:"IPX", name:"IperionX", sector:"Materials", region:"US"},
+  {id:90, ticker:"파두", name:"FADU", sector:"Korea Semis", region:"KR", tvSymbol:"KOSDAQ:440110"},
+  {id:91, ticker:"LS ELECTRIC", name:"LS ELECTRIC", sector:"Korea Power", region:"KR", tvSymbol:"KRX:010120"},
+  {id:92, ticker:"일진파워", name:"Iljin Power", sector:"Korea Nuclear", region:"KR", tvSymbol:"KOSDAQ:094820"},
+  {id:93, ticker:"휴림로봇", name:"Hyulim Robot", sector:"Korea Robotics", region:"KR", tvSymbol:"KOSDAQ:090710"},
+  {id:94, ticker:"나라스페이스테크놀로지", name:"Nara Space Technology", sector:"Korea Space", region:"KR"},
+  {id:95, ticker:"현대오토에버", name:"Hyundai AutoEver", sector:"Korea Software", region:"KR", tvSymbol:"KRX:307950"},
+  {id:96, ticker:"현대차", name:"Hyundai Motor", sector:"Korea Auto", region:"KR", tvSymbol:"KRX:005380"},
+  {id:97, ticker:"에이치브이엠", name:"HVM", sector:"Korea Materials", region:"KR"},
+  {id:98, ticker:"켄코아에어로스페이스", name:"Kencoa Aerospace", sector:"Korea Space", region:"KR", tvSymbol:"KOSDAQ:274090"},
+  {id:99, ticker:"그린광학", name:"Green Optics", sector:"Korea Photonics", region:"KR"},
+  {id:100, ticker:"비츠로넥스텍", name:"Bitsro Nextech", sector:"Korea Space", region:"KR"},
+  {id:101, ticker:"두산에너빌리티", name:"Doosan Enerbility", sector:"Korea Nuclear", region:"KR", tvSymbol:"KRX:034020"},
+  {id:102, ticker:"현대건설", name:"Hyundai Engineering & Construction", sector:"Korea Infra", region:"KR", tvSymbol:"KRX:000720"},
+  {id:103, ticker:"두산퓨얼셀", name:"Doosan Fuel Cell", sector:"Korea H2", region:"KR", tvSymbol:"KRX:336260"},
+  {id:104, ticker:"제이에스링크", name:"JS Link", sector:"Korea Tech", region:"KR"},
+  {id:105, ticker:"포스코인터내셔널", name:"POSCO International", sector:"Korea Materials", region:"KR", tvSymbol:"KRX:047050"},
+  {id:106, ticker:"로킷헬스케어", name:"Rokit Healthcare", sector:"Korea Health", region:"KR"},
+  {id:107, ticker:"우진", name:"Woojin", sector:"Korea Nuclear", region:"KR", tvSymbol:"KRX:105840"},
+  {id:108, ticker:"한화오션", name:"Hanwha Ocean", sector:"Korea Defense", region:"KR", tvSymbol:"KRX:042660"},
+  {id:109, ticker:"오르비텍", name:"Orbitech", sector:"Korea Nuclear", region:"KR", tvSymbol:"KOSDAQ:046120"},
+  {id:110, ticker:"비나텍", name:"Vinatech", sector:"Korea H2", region:"KR", tvSymbol:"KOSDAQ:126340"},
+  {id:111, ticker:"GRT", name:"GRT", sector:"Korea Materials", region:"KR", tvSymbol:"KOSDAQ:900290"},
+  {id:112, ticker:"우리기술", name:"Woori Technology", sector:"Korea Nuclear", region:"KR", tvSymbol:"KOSDAQ:032820"}
+
 ].map(s=>({...s,quality:'good',price:'good',override:false}));
 
-let activeSectors=['all'], analyzed={}, isAnalyzing=false, selectedId=null, selQ='good', selP='good';
+let activeSectors=['all'], analyzed={}, isAnalyzing=false, selectedId=null, selQ='good', selP='good', activePickTab='pullback';
 
 const getSectors  = ()=>[...new Set(stocks.map(s=>s.sector))];
 const getCellCls  = s=>CELLS.find(c=>c.q===s.quality&&c.p===s.price)?.cls||'neutral';
 const getAction   = s=>ACTION_MAP[getCellCls(s)]||'hold';
 const filtered    = ()=>activeSectors.includes('all')?stocks:stocks.filter(s=>activeSectors.includes(s.sector));
+const stockBandLabel = v=>({great:'wanted',good:'solid',shit:'weak'}[v] || v);
+const entryBandLabel = v=>({great:'high',good:'watch',shit:'low'}[v] || v);
+const PICK_COPY = {
+  pullback:'크게 움직인 주도주를 팔로우하다가 눌림목을 기다리는 후보',
+  avoid:'싸 보여도 수요와 신뢰가 약해서 새 돈을 넣지 않을 후보',
+  patience:'진짜 좋은 종목이지만 지금은 추격보다 기다림이 나은 후보'
+};
 
-async function analyzeOne(s) {
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: `You are an equity analyst. Analyze ${s.ticker} (${s.name}, sector: ${s.sector}).
+const STOCK_SCORES = {
+  NVDA:[96,76], AVGO:[94,74], INTC:[58,48], CRDO:[72,58], MRVL:[76,63], AMD:[82,68], TSM:[90,70], AMAT:[82,66], KLAC:[84,66], ARM:[88,58],
+  ALAB:[80,64], ANET:[90,72], LRCX:[80,64], ON:[60,50], SNDK:[52,46], MU:[74,66], LITE:[58,55], COHR:[62,58], AAOI:[44,40], FN:[72,58],
+  MTSI:[62,55], MKSI:[64,56], IPGP:[58,52], NBIS:[56,48], ORCL:[78,64], VRT:[88,72], EME:[80,64], DELL:[68,60], CEG:[89,66], CCJ:[80,63],
+  OKLO:[50,38], LEU:[64,52], UEC:[48,45], SMR:[45,34], NNE:[36,28], DNN:[50,46], UUUU:[48,44], URA:[62,58], URNM:[64,60], GEV:[82,68],
+  BE:[50,42], WULF:[46,44], APD:[72,56], LIN:[86,58], FCX:[72,62], SCCO:[74,56], MP:[50,45], AA:[42,46], TECK:[68,60], LAC:[36,34],
+  BHP:[76,62], SBSW:[38,42], VAL:[50,54], XPRO:[52,56], APH:[86,66], PALL:[42,48], POET:[46,42], SOXL:[70,54], TQQQ:[72,56], VICR:[58,48],
+  FORM:[60,55], ENTG:[72,60], QLD:[70,58], GLW:[64,58], VIAV:[52,48], AMZN:[88,68], GOOG:[86,66], PLTR:[86,70], CIEN:[64,58], TSLA:[74,52],
+  AEHR:[42,38], GFS:[58,50], JEPQ:[62,64], VALE:[58,54], KEYS:[72,60], TSEM:[60,54], JEPI:[60,62], IONQ:[62,48], AREC:[38,36], TMC:[36,34],
+  CIFR:[50,46], CRWV:[82,62], USAR:[42,38], CRML:[36,34], ALOY:[45,40], UMC:[62,58], NB:[38,36], PBR:[58,56], IPX:[44,40],
+  '파두':[54,46], 'LS ELECTRIC':[82,70], '일진파워':[56,52], '휴림로봇':[42,38], '나라스페이스테크놀로지':[48,42], '현대오토에버':[76,62],
+  '현대차':[78,64], '에이치브이엠':[46,42], '켄코아에어로스페이스':[54,48], '그린광학':[45,42], '비츠로넥스텍':[46,42], '두산에너빌리티':[80,68],
+  '현대건설':[64,58], '두산퓨얼셀':[52,44], '제이에스링크':[42,38], '포스코인터내셔널':[70,60], '로킷헬스케어':[44,38], '우진':[54,50],
+  '한화오션':[82,68], '오르비텍':[48,44], '비나텍':[50,44], GRT:[42,46], '우리기술':[52,48]
+};
 
-Based on your knowledge as of 2025, rate this stock:
-1. quality: "great" / "good" / "shit" (business quality, moat, financials)
-2. price: "great" (undervalued) / "good" (fair value) / "shit" (overvalued)
-3. qScore: 0-100 (quality score)
-4. pScore: 0-100 (price score, higher = more undervalued)
-5. analysis: 2-3 sentences in Korean explaining your reasoning
+const SECTOR_BASE = {
+  'AI Infra':[76,62], Semis:[70,58], Photonics:[58,52], Nuclear:[58,50], ETF:[64,60], Materials:[54,50], Power:[62,54],
+  'Mega Tech':[86,66], 'AI Software':[78,64], Networking:[64,58], Memory:[68,60], Connect:[78,62], 'Korea Power':[72,62],
+  'Korea Nuclear':[58,52], 'Korea Defense':[76,62], 'Korea Semis':[56,50], 'Korea Software':[72,60], 'Korea Auto':[74,60]
+};
 
-Respond ONLY with valid JSON, no markdown, no explanation:
-{"quality":"good","price":"shit","qScore":65,"pScore":30,"analysis":"분석 내용"}`
-        }]
-      })
-    });
-    const data = await res.json();
-    const text = data.content?.[0]?.text || '{}';
-    const json = JSON.parse(text.trim());
-    if (!s.override) {
-      s.quality = json.quality || 'good';
-      s.price   = json.price   || 'good';
-    }
-    analyzed[s.ticker] = {
-      qScore: json.qScore || 50,
-      pScore: json.pScore || 50,
-      aiText: json.analysis || '분석 없음',
-      done: true
-    };
-  } catch(e) {
-    analyzed[s.ticker] = {err: e.message, done: true};
+const scoreToBand = score => score >= 70 ? 'great' : score >= 45 ? 'good' : 'shit';
+const clampScore = score => Math.max(0, Math.min(100, score));
+const sectorBump = {ETF:3, Materials:1, 'Oil Svcs':0, Nuclear:2, 'AI Infra':4, Semis:2, Photonics:1, Power:2, 'H2/Gas':0, Connect:2, 'Mega Tech':3, 'AI Software':4, Networking:2, Memory:2, Storage:0, 'EV/AI':1, Quantum:0, 'Crypto Infra':0, Energy:0, 'Korea Power':3, 'Korea Nuclear':2, 'Korea Defense':3, 'Korea Software':2, 'Korea Auto':2, 'Korea Space':1, 'Korea Photonics':1, 'Korea Materials':1, 'Korea H2':0, 'Korea Infra':1, 'Korea Robotics':0, 'Korea Health':0, 'Korea Tech':0};
+
+const SECTOR_REASON = {
+  'AI Infra':'AI 인프라 지출, 데이터센터 증설, 기관 선호 내러티브가 강하게 작동하는 영역입니다.',
+  Semis:'반도체 사이클, AI/전장/장비 투자 기대가 수요를 만들지만 업황 변동성도 큽니다.',
+  Photonics:'광통신과 AI 네트워크 병목 해소 기대가 있지만 종목별 실적 확인이 중요합니다.',
+  Nuclear:'전력 부족과 원전 재평가 내러티브가 강하지만 정책/인허가 리스크가 큽니다.',
+  ETF:'개별 종목 리스크는 낮지만 레버리지나 테마 쏠림에 따라 진입 타이밍이 중요합니다.',
+  Materials:'구리, 희토류, 리튬 등 자원 수요 스토리는 좋지만 상품 가격 사이클 영향을 크게 받습니다.',
+  Power:'전력망, 발전, 에너지 인프라 투자가 이어지는 구간이라 구조적 관심이 붙기 쉽습니다.',
+  'Mega Tech':'현금흐름과 플랫폼 지배력이 강해 시장이 방어적 성장주로 계속 보는 축입니다.',
+  'AI Software':'AI 활용과 정부/기업 수요 기대가 강하지만 밸류에이션 민감도가 높은 영역입니다.',
+  'Korea Power':'전력기기와 전력망 투자 수혜 기대가 있어 한국 시장 안에서 수급이 붙기 쉬운 테마입니다.',
+  'Korea Nuclear':'원전 정책, 수출, 정비 수요 기대가 있지만 국내 정책 뉴스에 민감합니다.',
+  'Korea Defense':'방산/조선 수주 모멘텀이 붙을 때 시장 관심이 빠르게 몰리는 영역입니다.'
+};
+
+function scoreReason(type, score) {
+  if (type === 'stock') {
+    if (score >= 85) return '시장 지배력, 성장 스토리, 기관 선호가 모두 강해 비싸도 계속 보고 싶어지는 축입니다.';
+    if (score >= 70) return '명확한 성장 내러티브와 수급 관심이 있어 관심종목 상단에 둘 만합니다.';
+    if (score >= 45) return '스토리는 있으나 압도적인 수요나 신뢰가 아직 부족해 확인이 더 필요합니다.';
+    return '아직 시장이 적극적으로 사고 싶어 할 촉매나 신뢰가 약한 편입니다.';
   }
+  if (score >= 75) return '현재 위치에서도 추격보다 추가 매수 명분이 더 강하다고 보는 구간입니다.';
+  if (score >= 60) return '완전히 싸지는 않아도 모멘텀과 수급이 받쳐주면 분할 진입이 가능한 구간입니다.';
+  if (score >= 45) return '보유/관찰은 가능하지만 새 돈을 크게 넣기에는 확신이 중간 정도입니다.';
+  return '가격, 모멘텀, 수급 중 하나 이상이 약해 지금은 기다림이 더 자연스러운 구간입니다.';
 }
 
+function reasonList(s, qScore, pScore) {
+  const sectorText = SECTOR_REASON[s.sector] || `${s.sector} 테마의 시장 관심과 변동성을 함께 반영했습니다.`;
+  return [
+    `종목 매력도 근거: ${scoreReason('stock', qScore)}`,
+    `진입 매력도 근거: ${scoreReason('entry', pScore)}`,
+    `섹터 근거: ${sectorText}`
+  ];
+}
+
+function getScores(s) {
+  const base = STOCK_SCORES[s.ticker] || SECTOR_BASE[s.sector] || [55,45];
+  return {
+    qScore: clampScore(base[0]),
+    pScore: clampScore(base[1] + (sectorBump[s.sector] || 0))
+  };
+}
+
+function localAnalysis(s, qScore, pScore) {
+  const qBand = scoreToBand(qScore);
+  const pBand = scoreToBand(pScore);
+  const qualityText = qBand === 'great' ? '시장이 계속 사고 싶어 할 만한 내러티브와 신뢰가 강한 편' : qBand === 'good' ? '관심을 유지할 만한 스토리는 있지만 압도적 수요는 아닌 편' : '아직 사람들이 적극적으로 사고 싶어 할 이유가 약한 편';
+  const entryText = pBand === 'great' ? '현재 자리에서도 추가 매수 욕구가 생기기 쉬운 구간' : pBand === 'good' ? '보유하거나 천천히 모아볼 수 있는 중립 구간' : '좋은 회사여도 지금은 추격 매수 욕구가 약한 구간';
+  return `내장 수요 모델 기준으로 ${s.ticker}는 ${qualityText}입니다. 진입 매력은 ${entryText}으로 봅니다.\n\n${reasonList(s, qScore, pScore).join('\n')}\n\n이 분류는 밸류에이션만 보지 않고 가격, 모멘텀, 내러티브, 수급 욕구를 함께 반영한 참고용입니다.`;
+}
+
+async function analyzeOne(s) {
+  const {qScore, pScore} = getScores(s);
+  if (!s.override) {
+    s.quality = scoreToBand(qScore);
+    s.price = scoreToBand(pScore);
+  }
+  analyzed[s.ticker] = {
+    qScore,
+    pScore,
+    aiText: localAnalysis(s, qScore, pScore),
+    done: true
+  };
+  await new Promise(resolve => setTimeout(resolve, 80));
+}
 async function analyzeAll() {
   if (isAnalyzing) return;
   isAnalyzing = true;
@@ -326,8 +499,8 @@ function showDetail(id) {
   document.getElementById('detail-panel').classList.add('open');
   document.getElementById('detail-title').textContent = `${s.ticker} — ${s.name}`;
   selQ = s.quality; selP = s.price;
-  document.querySelectorAll('#seg-q .seg-btn').forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===selQ));
-  document.querySelectorAll('#seg-p .seg-btn').forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===selP));
+  document.querySelectorAll('#seg-q .seg-btn').forEach(b=>b.classList.toggle('sel',b.dataset.val===selQ));
+  document.querySelectorAll('#seg-p .seg-btn').forEach(b=>b.classList.toggle('sel',b.dataset.val===selP));
   const a = analyzed[s.ticker];
   if (!a || !a.done) {
     document.getElementById('ai-box').textContent = '분석 중...';
@@ -345,10 +518,49 @@ function showDetail(id) {
 }
 
 function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); selectedId=null; }
+function closeCellDetail() { document.getElementById('cell-panel').classList.remove('open'); }
+
+function cellMeaning(c) {
+  const map = {
+    jackpot:'강한 종목 매력과 높은 진입 매력이 동시에 있는 칸입니다. 관심종목 중에서는 가장 적극적으로 추적할 후보지만, 실제 진입은 차트 눌림과 리스크 관리를 같이 봐야 합니다.',
+    'strong-buy':'종목 스토리나 진입 매력 중 하나가 강하게 받쳐주는 칸입니다. 바로 추격보다 분할 진입, 눌림목, 섹터 수급 확인에 적합합니다.',
+    'hold-good':'균형 잡힌 칸입니다. 새로 큰 비중을 넣기보다는 보유, 관찰, 천천히 비중 조절하는 성격이 강합니다.',
+    patience:'종목 자체는 매력적이지만 지금 자리는 붐비거나 추격 부담이 있는 칸입니다. 좋은 종목이라도 기다리는 이유가 분명한 구역입니다.',
+    neutral:'방향성이 애매한 칸입니다. 촉매가 확인되기 전까지는 관찰 우선이며, 싼 느낌만으로 들어가기에는 근거가 부족합니다.',
+    avoid:'수요, 신뢰, 진입 매력이 모두 약한 칸입니다. 새 돈을 넣기보다 리스트에서 계속 검증하거나 제외 후보로 보는 쪽입니다.'
+  };
+  return map[c.cls] || '관찰이 필요한 칸입니다.';
+}
+
+function showCellDetail(q, p) {
+  const c = CELLS.find(x=>x.q===q&&x.p===p);
+  if (!c) return;
+  const fs = filtered().filter(s=>s.quality===q&&s.price===p);
+  const ranked = [...fs].sort((a,b)=>{
+    const as=getScores(a), bs=getScores(b);
+    return (bs.qScore+bs.pScore) - (as.qScore+as.pScore);
+  });
+  document.getElementById('cell-panel').classList.add('open');
+  document.getElementById('cell-title').textContent = `${c.label} — ${fs.length}개 종목`;
+  const top = ranked.slice(0,5).map(s=>s.ticker).join(', ') || '해당 종목 없음';
+  document.getElementById('cell-summary').textContent = `${cellMeaning(c)} 대표 종목: ${top}.`;
+  document.getElementById('cell-stock-list').innerHTML = ranked.map(s=>{
+    const {qScore,pScore}=getScores(s);
+    const reasons=reasonList(s,qScore,pScore);
+    return `<div class="cell-stock" onclick="showDetail(${s.id})">
+      <div class="cell-stock-top">
+        <div class="cell-stock-ticker">${s.ticker}</div>
+        <div class="cell-stock-score">매력 ${Math.round(qScore)}<br>진입 ${Math.round(pScore)}</div>
+      </div>
+      <div class="cell-stock-note">${s.name}<br>${reasons[0].replace('종목 매력도 근거: ','')}</div>
+    </div>`;
+  }).join('') || '<div class="cell-summary">현재 필터에서는 이 칸에 들어간 종목이 없습니다.</div>';
+  document.getElementById('cell-panel').scrollIntoView({behavior:'smooth', block:'start'});
+}
 
 function seg(type, val) {
   if(type==='q') selQ=val; else selP=val;
-  document.querySelectorAll(`#seg-${type} .seg-btn`).forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===val));
+  document.querySelectorAll(`#seg-${type} .seg-btn`).forEach(b=>b.classList.toggle('sel',b.dataset.val===val));
 }
 function saveOverride() {
   const s=stocks.find(x=>x.id===selectedId); if(!s) return;
@@ -359,12 +571,12 @@ function resetOverride() {
   s.override=false;
   const a=analyzed[s.ticker];
   if(a&&a.done&&!a.err) {
-    s.quality=a.qScore>=65?'great':a.qScore>=35?'good':'shit';
-    s.price=a.pScore>=65?'great':a.pScore>=35?'good':'shit';
+    s.quality=scoreToBand(a.qScore);
+    s.price=scoreToBand(a.pScore);
   }
   selQ=s.quality; selP=s.price;
-  document.querySelectorAll('#seg-q .seg-btn').forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===selQ));
-  document.querySelectorAll('#seg-p .seg-btn').forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===selP));
+  document.querySelectorAll('#seg-q .seg-btn').forEach(b=>b.classList.toggle('sel',b.dataset.val===selQ));
+  document.querySelectorAll('#seg-p .seg-btn').forEach(b=>b.classList.toggle('sel',b.dataset.val===selP));
   render();
 }
 function deleteStock() { stocks=stocks.filter(x=>x.id!==selectedId); closeDetail(); render(); }
@@ -384,15 +596,119 @@ function toggleSector(s) {
   }
   render();
 }
+
+function setPickTab(tab) {
+  activePickTab = tab;
+  renderPicks();
+}
+
+function tvSymbol(s) {
+  if (s.tvSymbol) return s.tvSymbol;
+  const noChart = new Set(['ALOY']);
+  if (noChart.has(s.ticker)) return '';
+  const nyse = new Set(['ORCL','VRT','EME','DELL','CEG','GEV','BE','APD','LIN','FCX','SCCO','MP','AA','TECK','BHP','SBSW','VAL','XPRO','TSM','TSLA','VALE','PBR','LAC']);
+  const amex = new Set(['URA','URNM','PALL','SOXL','QLD','JEPI']);
+  if (amex.has(s.ticker)) return `AMEX:${s.ticker}`;
+  if (nyse.has(s.ticker)) return `NYSE:${s.ticker}`;
+  if (s.region === 'US') return `NASDAQ:${s.ticker}`;
+  return '';
+}
+
+function pickRank(s, tab) {
+  const {qScore, pScore} = getScores(s);
+  if (tab === 'avoid') return (100 - qScore) * 0.7 + (100 - pScore) * 0.3;
+  if (tab === 'patience') return qScore * 0.82 + Math.max(0, 68 - pScore) * 0.55;
+  const pullbackZone = 100 - Math.abs(pScore - 64) * 1.8;
+  return qScore * 0.72 + pullbackZone * 0.28;
+}
+
+function getPicks(tab) {
+  const fs = filtered();
+  const chartable = fs.filter(s => tvSymbol(s));
+  let pool = chartable;
+  if (tab === 'pullback') pool = chartable.filter(s => {
+    const {qScore, pScore} = getScores(s);
+    return qScore >= 72 && pScore >= 62 && pScore <= 76;
+  });
+  if (tab === 'patience') pool = chartable.filter(s => {
+    const {qScore, pScore} = getScores(s);
+    return qScore >= 78 && pScore < 66;
+  });
+  if (tab === 'avoid') pool = chartable.filter(s => {
+    const {qScore, pScore} = getScores(s);
+    return qScore < 52 || pScore < 42;
+  });
+  return [...pool].sort((a,b)=>pickRank(b,tab)-pickRank(a,tab)).slice(0,3);
+}
+
+function pickReason(tab, qScore, pScore) {
+  if (tab === 'avoid') {
+    return qScore < 45
+      ? '시장 수요와 신뢰가 약해 싸 보여도 새 돈을 넣기 어렵습니다.'
+      : '진입 매력이나 촉매가 약해 지금 굳이 살 이유가 부족합니다.';
+  }
+  if (tab === 'patience') {
+    return '종목 자체는 강하지만 지금은 추격보다 조정이나 재진입 구간을 기다리는 쪽입니다.';
+  }
+  return '주도 테마 안에서 매력은 강하고, 눌림목이 오면 다시 확인할 만한 후보입니다.';
+}
+
+function chartSrcDoc(symbol) {
+  const config = {
+    autosize: true,
+    symbol,
+    interval: 'D',
+    timezone: 'Asia/Seoul',
+    theme: 'light',
+    style: '1',
+    locale: 'en',
+    allow_symbol_change: false,
+    hide_side_toolbar: true,
+    calendar: false,
+    support_host: 'https://www.tradingview.com'
+  };
+  return `<!doctype html><html><head><meta charset="utf-8"><style>html,body,.tradingview-widget-container{width:100%;height:100%;margin:0}</style></head><body><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>${JSON.stringify(config).replace(/</g,'\\u003c')}<\/script></div></body></html>`;
+}
+
+function fullChartUrl(s, symbol) {
+  if (symbol) return `https://www.tradingview.com/chart/?symbol=${encodeURIComponent(symbol)}`;
+  return `https://www.tradingview.com/search/?query=${encodeURIComponent(`${s.ticker} ${s.name}`)}`;
+}
+
+function renderPicks() {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`tab-${activePickTab}`)?.classList.add('active');
+  document.getElementById('picks-subtitle').textContent = PICK_COPY[activePickTab] || '';
+  const picks = getPicks(activePickTab);
+  document.getElementById('picks-grid').innerHTML = picks.map(s=>{
+    const {qScore, pScore} = getScores(s);
+    const symbol = tvSymbol(s);
+    const link = fullChartUrl(s, symbol);
+    const reasons = reasonList(s, qScore, pScore);
+    const chart = symbol
+      ? `<iframe class="chart-frame" title="${s.ticker} chart" srcdoc='${chartSrcDoc(symbol).replace(/'/g,'&#39;')}' loading="lazy" referrerpolicy="origin"></iframe>`
+      : `<div class="chart-empty">상장 코드 확인 필요<br>아래 링크로 검색</div>`;
+    return `<div class="pick-card">
+      <div class="pick-meta">
+        <div><div class="pick-symbol">${s.ticker}</div><div class="pick-name">${s.name}</div></div>
+        <div class="pick-score">매력 ${Math.round(qScore)}<br>진입 ${Math.round(pScore)}</div>
+      </div>
+      ${chart}
+      <div class="pick-reason"><b>의미</b><br>${pickReason(activePickTab, qScore, pScore)}<br><b>근거</b><br>${reasons[0].replace('종목 매력도 근거: ','')}<br>${reasons[1].replace('진입 매력도 근거: ','')}</div>
+      <a class="chart-link" href="${link}" target="_blank" rel="noopener">TradingView에서 열기</a>
+    </div>`;
+  }).join('');
+}
+
 function renderMatrix() {
   const fs=filtered();
   document.getElementById('matrix').innerHTML=CELLS.map(c=>{
     const match=fs.filter(s=>s.quality===c.q&&s.price===c.p);
     const chips=match.map(s=>{
       const a=analyzed[s.ticker]; const loading=!a||!a.done; const act=getAction(s);
-      return`<div class="chip ${loading?'chip-pending pulsing':CHIP_CLS[act]}" onclick="showDetail(${s.id})">${s.ticker}${s.override?'*':''}</div>`;
+      return`<div class="chip ${loading?'chip-pending pulsing':CHIP_CLS[act]}" onclick="event.stopPropagation();showDetail(${s.id})">${s.ticker}${s.override?'*':''}</div>`;
     }).join('');
-    return`<div class="cell ${c.cls}"><div class="cell-label">${c.label}</div><div class="cell-hint">${c.hint}</div><div class="chips">${chips}</div></div>`;
+    return`<div class="cell ${c.cls}" onclick="showCellDetail('${c.q}','${c.p}')"><div class="cell-label">${c.label}</div><div class="cell-hint">${c.hint}</div><div class="chips">${chips}</div></div>`;
   }).join('');
 }
 function renderTable() {
@@ -405,8 +721,8 @@ function renderTable() {
       <td style="color:#aaa;font-size:11px">${s.sector}</td>
       <td>${a?.qScore!=null?Math.round(a.qScore):'—'}</td>
       <td>${a?.pScore!=null?Math.round(a.pScore):'—'}</td>
-      <td style="font-size:11px">${s.quality}</td>
-      <td style="font-size:11px">${s.price}</td>
+      <td style="font-size:11px">${stockBandLabel(s.quality)}</td>
+      <td style="font-size:11px">${entryBandLabel(s.price)}</td>
       <td><span class="chip ${cls}">${act}</span></td>
     </tr>`;
   }).join('');
@@ -420,7 +736,7 @@ function renderStats() {
     <div class="stat-card"><div class="stat-val" style="color:#854F0B">${c.watch}</div><div class="stat-lbl">Watch</div></div>
     <div class="stat-card"><div class="stat-val" style="color:#A32D2D">${c.avoid}</div><div class="stat-lbl">Avoid</div></div>`;
 }
-function render(){renderSectors();renderMatrix();renderTable();renderStats();}
+function render(){renderSectors();renderStats();renderPicks();renderMatrix();renderTable();}
 render();
 </script>
 </body>
