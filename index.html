@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investment Matrix</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;padding:1.5rem}
+.wrap{max-width:1100px;margin:0 auto}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px}
+.title{font-size:20px;font-weight:500}
+.subtitle{font-size:12px;color:#888;margin-top:2px}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid #ddd;cursor:pointer;color:#666;background:#fff;white-space:nowrap}
+.tag.active{background:#eee;color:#111;border-color:#999}
+.btn-primary{font-size:13px;padding:7px 16px;border-radius:8px;border:none;background:#111;color:#fff;cursor:pointer;font-weight:500}
+.btn-primary:hover{background:#333}
+.btn-primary.running{background:#888;cursor:not-allowed}
+.progress-wrap{margin-bottom:1rem;display:none}
+.progress-label{font-size:11px;color:#888;margin-bottom:4px}
+.progress-bar{height:4px;background:#e5e5e5;border-radius:2px}
+.progress-fill{height:100%;background:#3B6D11;border-radius:2px;transition:width 0.3s}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+.stat-card{background:#fff;border-radius:10px;border:1px solid #e5e5e5;padding:10px 14px}
+.stat-val{font-size:22px;font-weight:500}
+.stat-lbl{font-size:11px;color:#888;margin-top:1px}
+.matrix-section{background:#fff;border-radius:12px;border:1px solid #e5e5e5;padding:1rem;margin-bottom:1rem}
+.matrix-outer{display:flex;gap:4px;align-items:stretch}
+.y-label-txt{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;color:#888;letter-spacing:0.05em;white-space:nowrap;text-align:center;padding-right:2px}
+.y-ticks{display:flex;flex-direction:column;justify-content:space-around;height:360px;text-align:right;margin-right:6px}
+.y-tick{font-size:9px;color:#bbb;white-space:nowrap}
+.matrix-wrap{flex:1}
+.x-labels{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:4px}
+.x-label{text-align:center;font-size:10px;color:#888}
+.matrix{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:4px;height:360px}
+.cell{border-radius:8px;border:1px solid #e5e5e5;padding:8px;display:flex;flex-direction:column;overflow:hidden}
+.cell-label{font-size:10px;font-weight:600;margin-bottom:2px;text-transform:uppercase}
+.cell-hint{font-size:9px;opacity:0.5;margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:3px;overflow:hidden}
+.chip{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;cursor:pointer;border:1px solid transparent;white-space:nowrap;transition:opacity 0.1s}
+.chip:hover{opacity:0.7}
+.chip.pulsing{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
+.jackpot{background:#EAF3DE;border-color:#C0DD97}.jackpot .cell-label{color:#3B6D11}
+.strong-buy{background:#E1F5EE;border-color:#9FE1CB}.strong-buy .cell-label{color:#0F6E56}
+.hold-good{background:#E6F1FB;border-color:#B5D4F4}.hold-good .cell-label{color:#185FA5}
+.patience{background:#FAEEDA;border-color:#FAC775}.patience .cell-label{color:#854F0B}
+.neutral{background:#f5f5f5}.neutral .cell-label{color:#666}
+.avoid{background:#FCEBEB;border-color:#F7C1C1}.avoid .cell-label{color:#A32D2D}
+.chip-buy{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97}
+.chip-hold{background:#E6F1FB;color:#185FA5;border-color:#B5D4F4}
+.chip-watch{background:#FAEEDA;color:#854F0B;border-color:#FAC775}
+.chip-avoid{background:#FCEBEB;color:#A32D2D;border-color:#F7C1C1}
+.chip-pending{background:#f0f0f0;color:#bbb;border-color:#e0e0e0}
+.x-bottom{display:grid;grid-template-columns:repeat(3,1fr);margin-top:4px}
+.detail-panel{background:#fff;border-radius:12px;border:1px solid #e5e5e5;padding:1.25rem;margin-bottom:1rem;display:none}
+.detail-panel.open{display:block}
+.detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.detail-title{font-size:16px;font-weight:500}
+.detail-close{cursor:pointer;color:#bbb;font-size:22px}
+.score-bar-wrap{margin-bottom:10px}
+.score-label{font-size:11px;color:#666;margin-bottom:3px;display:flex;justify-content:space-between}
+.score-track{height:6px;background:#f0f0f0;border-radius:3px}
+.score-fill{height:100%;border-radius:3px;transition:width 0.6s}
+.ai-box{background:#f8f8f8;border-radius:8px;border:1px solid #eee;padding:12px 14px;font-size:13px;line-height:1.75;color:#333;margin-top:10px;white-space:pre-wrap}
+.seg{display:flex;gap:4px;margin-top:4px}
+.seg-btn{flex:1;padding:5px;font-size:11px;border:1px solid #ddd;border-radius:6px;cursor:pointer;background:#fff;color:#666;text-align:center}
+.seg-btn.sel{background:#111;color:#fff;border-color:#111;font-weight:500}
+.override-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid #eee}
+.oa-actions{display:flex;gap:6px;margin-top:8px}
+.oa-btn{flex:1;padding:6px;border-radius:6px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-size:11px}
+.oa-del{padding:6px 12px;border-radius:6px;border:1px solid #F7C1C1;background:#FCEBEB;cursor:pointer;font-size:11px;color:#A32D2D}
+.table-section{background:#fff;border-radius:12px;border:1px solid #e5e5e5;overflow:hidden}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:10px;font-weight:500;color:#888;text-align:left;padding:8px 10px;border-bottom:1px solid #e5e5e5;background:#fafafa;white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid #f0f0f0;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr.row{cursor:pointer}
+tr.row:hover td{background:#f8f8f8}
+.field-lbl{font-size:11px;color:#666;margin-bottom:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div>
+    <div class="title">Investment Matrix</div>
+    <div class="subtitle" id="status">▶ 전체 분석 버튼을 눌러 시작하세요</div>
+  </div>
+  <div class="toolbar">
+    <div id="sector-filters" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+    <button class="btn-primary" id="analyze-btn" onclick="analyzeAll()">▶ 전체 분석</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="prog-wrap">
+  <div class="progress-label" id="prog-label">분석 중...</div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="stats-row" id="stats-row"></div>
+
+<div class="matrix-section">
+  <div class="matrix-outer">
+    <div class="y-label-txt">← 가격 →</div>
+    <div class="y-ticks">
+      <div class="y-tick">SHIT PRICE ▲</div>
+      <div class="y-tick">MID PRICE</div>
+      <div class="y-tick">▼ GOOD PRICE</div>
+    </div>
+    <div class="matrix-wrap">
+      <div class="x-labels">
+        <div class="x-label">GOOD COMPANY</div>
+        <div class="x-label">MID COMPANY</div>
+        <div class="x-label">SHIT COMPANY</div>
+      </div>
+      <div class="matrix" id="matrix"></div>
+      <div class="x-bottom">
+        <div style="font-size:9px;color:#bbb;padding-left:4px">← Good</div>
+        <div style="font-size:9px;color:#bbb;text-align:center">Mid</div>
+        <div style="font-size:9px;color:#bbb;text-align:right;padding-right:4px">Shit →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="detail-panel" id="detail-panel">
+  <div class="detail-header">
+    <div class="detail-title" id="detail-title"></div>
+    <div class="detail-close" onclick="closeDetail()">×</div>
+  </div>
+  <div class="score-bar-wrap">
+    <div class="score-label"><span>퀄리티 스코어</span><span id="q-val">—</span></div>
+    <div class="score-track"><div class="score-fill" id="q-bar" style="width:0%;background:#3B6D11"></div></div>
+  </div>
+  <div class="score-bar-wrap">
+    <div class="score-label"><span>가격 스코어 (높을수록 저평가)</span><span id="p-val">—</span></div>
+    <div class="score-track"><div class="score-fill" id="p-bar" style="width:0%;background:#185FA5"></div></div>
+  </div>
+  <div class="ai-box" id="ai-box">분석 없음</div>
+  <div class="override-row">
+    <div>
+      <div class="field-lbl">퀄리티 수동 조정</div>
+      <div class="seg" id="seg-q">
+        <div class="seg-btn" onclick="seg('q','great')">Great</div>
+        <div class="seg-btn" onclick="seg('q','good')">Good</div>
+        <div class="seg-btn" onclick="seg('q','shit')">Shit</div>
+      </div>
+    </div>
+    <div>
+      <div class="field-lbl">가격 수동 조정</div>
+      <div class="seg" id="seg-p">
+        <div class="seg-btn" onclick="seg('p','great')">Great</div>
+        <div class="seg-btn" onclick="seg('p','good')">Good</div>
+        <div class="seg-btn" onclick="seg('p','shit')">Shit</div>
+      </div>
+    </div>
+  </div>
+  <div class="oa-actions">
+    <button class="oa-btn" onclick="saveOverride()">저장</button>
+    <button class="oa-btn" onclick="resetOverride()">AI 결과로 리셋</button>
+    <button class="oa-del" onclick="deleteStock()">삭제</button>
+  </div>
+</div>
+
+<div class="table-section">
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>티커</th><th>회사명</th><th>섹터</th><th>Q점수</th><th>P점수</th><th>퀄리티</th><th>가격</th><th>액션</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<script>
+const CLAUDE_KEY = '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';
+
+// Y축 위→아래: shit price → mid price → good price
+// X축 왼→오:  good company → mid company → shit company
+const CELLS = [
+  {q:'great',p:'shit', cls:'patience',  label:'Patience',   hint:'Wait for drop'},
+  {q:'good', p:'shit', cls:'neutral',   label:'Overpriced', hint:'Good co, bad price'},
+  {q:'shit', p:'shit', cls:'avoid',     label:'Avoid',      hint:'The worst'},
+  {q:'great',p:'good', cls:'strong-buy',label:'Strong buy', hint:'Almost jackpot'},
+  {q:'good', p:'good', cls:'hold-good', label:'Hold',       hint:'Fair value'},
+  {q:'shit', p:'good', cls:'avoid',     label:'Avoid',      hint:'Bad company'},
+  {q:'great',p:'great',cls:'jackpot',   label:'Jackpot',    hint:'Buy aggressively'},
+  {q:'good', p:'great',cls:'strong-buy',label:'Buy',        hint:'Undervalued'},
+  {q:'shit', p:'great',cls:'neutral',   label:'Trap',       hint:'Cheap for reason'},
+];
+const ACTION_MAP = {jackpot:'buy','strong-buy':'buy','hold-good':'hold',patience:'watch',neutral:'watch',avoid:'avoid'};
+const CHIP_CLS   = {buy:'chip-buy',hold:'chip-hold',watch:'chip-watch',avoid:'chip-avoid'};
+
+let stocks = [
+  {id:1, ticker:'CEG', name:'Constellation Energy',   sector:'Nuclear'},
+  {id:2, ticker:'CCJ', name:'Cameco',                 sector:'Nuclear'},
+  {id:3, ticker:'OKLO',name:'Oklo',                   sector:'Nuclear'},
+  {id:4, ticker:'LEU', name:'Centrus Energy',          sector:'Nuclear'},
+  {id:5, ticker:'UEC', name:'Uranium Energy',          sector:'Nuclear'},
+  {id:6, ticker:'SMR', name:'NuScale Power',           sector:'Nuclear'},
+  {id:7, ticker:'NNE', name:'Nano Nuclear',            sector:'Nuclear'},
+  {id:8, ticker:'DNN', name:'Denison Mines',           sector:'Nuclear'},
+  {id:9, ticker:'UUUU',name:'Energy Fuels',            sector:'Nuclear'},
+  {id:10,ticker:'URA', name:'Global X Uranium ETF',    sector:'Nuclear'},
+  {id:11,ticker:'URNM',name:'Sprott Uranium ETF',      sector:'Nuclear'},
+  {id:12,ticker:'GEV', name:'GE Vernova',              sector:'Power'},
+  {id:13,ticker:'BE',  name:'Bloom Energy',            sector:'Power'},
+  {id:14,ticker:'WULF',name:'TeraWulf',                sector:'Power'},
+  {id:15,ticker:'NBIS',name:'Nebius',                  sector:'AI Infra'},
+  {id:16,ticker:'APD', name:'Air Products',            sector:'H2/Gas'},
+  {id:17,ticker:'LIN', name:'Linde',                   sector:'H2/Gas'},
+  {id:18,ticker:'LITE',name:'Lumentum',                sector:'Photonics'},
+  {id:19,ticker:'COHR',name:'Coherent',                sector:'Photonics'},
+  {id:20,ticker:'MRVL',name:'Marvell Technology',      sector:'Semis'},
+  {id:21,ticker:'FN',  name:'Fabrinet',                sector:'Photonics'},
+  {id:22,ticker:'MTSI',name:'MACOM Technology',        sector:'Photonics'},
+  {id:23,ticker:'MKSI',name:'MKS Instruments',         sector:'Photonics'},
+  {id:24,ticker:'IPGP',name:'IPG Photonics',           sector:'Photonics'},
+  {id:25,ticker:'AAOI',name:'Applied Optoelectronics', sector:'Photonics'},
+  {id:26,ticker:'NVDA',name:'Nvidia',                  sector:'AI Infra'},
+  {id:27,ticker:'INTC',name:'Intel',                   sector:'Semis'},
+  {id:28,ticker:'ORCL',name:'Oracle',                  sector:'AI Infra'},
+  {id:29,ticker:'AVGO',name:'Broadcom',                sector:'AI Infra'},
+  {id:30,ticker:'VRT', name:'Vertiv',                  sector:'AI Infra'},
+  {id:31,ticker:'APH', name:'Amphenol',                sector:'Connect'},
+  {id:32,ticker:'DELL',name:'Dell Technologies',       sector:'AI Infra'},
+  {id:33,ticker:'CRDO',name:'Credo Semiconductor',     sector:'Semis'},
+  {id:34,ticker:'EME', name:'EMCOR Group',             sector:'AI Infra'},
+  {id:35,ticker:'FCX', name:'Freeport-McMoRan',        sector:'Materials'},
+  {id:36,ticker:'SCCO',name:'Southern Copper',         sector:'Materials'},
+  {id:37,ticker:'MP',  name:'MP Materials',            sector:'Materials'},
+  {id:38,ticker:'AA',  name:'Alcoa',                   sector:'Materials'},
+  {id:39,ticker:'TECK',name:'Teck Resources',          sector:'Materials'},
+  {id:40,ticker:'LAC', name:'Lithium Americas',        sector:'Materials'},
+  {id:41,ticker:'BHP', name:'BHP Group',               sector:'Materials'},
+  {id:42,ticker:'SBSW',name:'Sibanye Stillwater',      sector:'Materials'},
+  {id:43,ticker:'VAL', name:'Valaris',                 sector:'Oil Svcs'},
+  {id:44,ticker:'XPRO',name:'Expro Group',             sector:'Oil Svcs'},
+  {id:45,ticker:'PALL',name:'abrdn Palladium ETF',     sector:'ETF'},
+].map(s=>({...s,quality:'good',price:'good',override:false}));
+
+let activeSectors=['all'], analyzed={}, isAnalyzing=false, selectedId=null, selQ='good', selP='good';
+
+const getSectors  = ()=>[...new Set(stocks.map(s=>s.sector))];
+const getCellCls  = s=>CELLS.find(c=>c.q===s.quality&&c.p===s.price)?.cls||'neutral';
+const getAction   = s=>ACTION_MAP[getCellCls(s)]||'hold';
+const filtered    = ()=>activeSectors.includes('all')?stocks:stocks.filter(s=>activeSectors.includes(s.sector));
+
+async function analyzeOne(s) {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `You are an equity analyst. Analyze ${s.ticker} (${s.name}, sector: ${s.sector}).
+
+Based on your knowledge as of 2025, rate this stock:
+1. quality: "great" / "good" / "shit" (business quality, moat, financials)
+2. price: "great" (undervalued) / "good" (fair value) / "shit" (overvalued)
+3. qScore: 0-100 (quality score)
+4. pScore: 0-100 (price score, higher = more undervalued)
+5. analysis: 2-3 sentences in Korean explaining your reasoning
+
+Respond ONLY with valid JSON, no markdown, no explanation:
+{"quality":"good","price":"shit","qScore":65,"pScore":30,"analysis":"분석 내용"}`
+        }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '{}';
+    const json = JSON.parse(text.trim());
+    if (!s.override) {
+      s.quality = json.quality || 'good';
+      s.price   = json.price   || 'good';
+    }
+    analyzed[s.ticker] = {
+      qScore: json.qScore || 50,
+      pScore: json.pScore || 50,
+      aiText: json.analysis || '분석 없음',
+      done: true
+    };
+  } catch(e) {
+    analyzed[s.ticker] = {err: e.message, done: true};
+  }
+}
+
+async function analyzeAll() {
+  if (isAnalyzing) return;
+  isAnalyzing = true;
+  const btn = document.getElementById('analyze-btn');
+  btn.textContent = '분석 중...'; btn.classList.add('running');
+  document.getElementById('prog-wrap').style.display = 'block';
+  const list = filtered();
+  for (let i = 0; i < list.length; i++) {
+    document.getElementById('prog-label').textContent = `(${i+1}/${list.length}) ${list[i].ticker} 분석 중...`;
+    document.getElementById('prog-fill').style.width = Math.round(i/list.length*100)+'%';
+    await analyzeOne(list[i]);
+    render();
+    if (selectedId === list[i].id) showDetail(list[i].id);
+  }
+  document.getElementById('prog-fill').style.width = '100%';
+  setTimeout(()=>document.getElementById('prog-wrap').style.display='none', 600);
+  btn.textContent = '▶ 재분석'; btn.classList.remove('running');
+  document.getElementById('status').textContent = `완료: ${new Date().toLocaleTimeString()}`;
+  isAnalyzing = false;
+}
+
+function showDetail(id) {
+  selectedId = id;
+  const s = stocks.find(x=>x.id===id); if(!s) return;
+  document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('detail-title').textContent = `${s.ticker} — ${s.name}`;
+  selQ = s.quality; selP = s.price;
+  document.querySelectorAll('#seg-q .seg-btn').forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===selQ));
+  document.querySelectorAll('#seg-p .seg-btn').forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===selP));
+  const a = analyzed[s.ticker];
+  if (!a || !a.done) {
+    document.getElementById('ai-box').textContent = '분석 중...';
+    document.getElementById('q-val').textContent = '—'; document.getElementById('p-val').textContent = '—';
+    document.getElementById('q-bar').style.width = '0%'; document.getElementById('p-bar').style.width = '0%';
+    if (!isAnalyzing) analyzeOne(s).then(()=>{render(); if(selectedId===id) showDetail(id);});
+    return;
+  }
+  if (a.err) { document.getElementById('ai-box').textContent = '오류: '+a.err; return; }
+  document.getElementById('q-val').textContent = Math.round(a.qScore)+'/100';
+  document.getElementById('p-val').textContent = Math.round(a.pScore)+'/100';
+  document.getElementById('q-bar').style.width = Math.round(a.qScore)+'%';
+  document.getElementById('p-bar').style.width = Math.round(a.pScore)+'%';
+  document.getElementById('ai-box').textContent = a.aiText;
+}
+
+function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); selectedId=null; }
+
+function seg(type, val) {
+  if(type==='q') selQ=val; else selP=val;
+  document.querySelectorAll(`#seg-${type} .seg-btn`).forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===val));
+}
+function saveOverride() {
+  const s=stocks.find(x=>x.id===selectedId); if(!s) return;
+  s.quality=selQ; s.price=selP; s.override=true; render();
+}
+function resetOverride() {
+  const s=stocks.find(x=>x.id===selectedId); if(!s) return;
+  s.override=false;
+  const a=analyzed[s.ticker];
+  if(a&&a.done&&!a.err) {
+    s.quality=a.qScore>=65?'great':a.qScore>=35?'good':'shit';
+    s.price=a.pScore>=65?'great':a.pScore>=35?'good':'shit';
+  }
+  selQ=s.quality; selP=s.price;
+  document.querySelectorAll('#seg-q .seg-btn').forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===selQ));
+  document.querySelectorAll('#seg-p .seg-btn').forEach(b=>b.classList.toggle('sel',b.textContent.toLowerCase()===selP));
+  render();
+}
+function deleteStock() { stocks=stocks.filter(x=>x.id!==selectedId); closeDetail(); render(); }
+
+function renderSectors() {
+  const el=document.getElementById('sector-filters');
+  let h=`<div class="tag ${activeSectors.includes('all')?'active':''}" onclick="toggleSector('all')">전체</div>`;
+  getSectors().forEach(s=>{h+=`<div class="tag ${activeSectors.includes(s)?'active':''}" onclick="toggleSector('${s}')">${s}</div>`;});
+  el.innerHTML=h;
+}
+function toggleSector(s) {
+  if(s==='all'){activeSectors=['all'];}
+  else{
+    activeSectors=activeSectors.filter(x=>x!=='all');
+    if(activeSectors.includes(s)){activeSectors=activeSectors.filter(x=>x!==s);if(!activeSectors.length)activeSectors=['all'];}
+    else activeSectors.push(s);
+  }
+  render();
+}
+function renderMatrix() {
+  const fs=filtered();
+  document.getElementById('matrix').innerHTML=CELLS.map(c=>{
+    const match=fs.filter(s=>s.quality===c.q&&s.price===c.p);
+    const chips=match.map(s=>{
+      const a=analyzed[s.ticker]; const loading=!a||!a.done; const act=getAction(s);
+      return`<div class="chip ${loading?'chip-pending pulsing':CHIP_CLS[act]}" onclick="showDetail(${s.id})">${s.ticker}${s.override?'*':''}</div>`;
+    }).join('');
+    return`<div class="cell ${c.cls}"><div class="cell-label">${c.label}</div><div class="cell-hint">${c.hint}</div><div class="chips">${chips}</div></div>`;
+  }).join('');
+}
+function renderTable() {
+  const fs=filtered();
+  document.getElementById('tbody').innerHTML=[...fs].map(s=>{
+    const a=analyzed[s.ticker]; const act=getAction(s); const cls=CHIP_CLS[act];
+    return`<tr class="row" onclick="showDetail(${s.id})">
+      <td><span class="chip ${cls}">${s.ticker}${s.override?'*':''}</span></td>
+      <td style="color:#888;font-size:11px">${s.name}</td>
+      <td style="color:#aaa;font-size:11px">${s.sector}</td>
+      <td>${a?.qScore!=null?Math.round(a.qScore):'—'}</td>
+      <td>${a?.pScore!=null?Math.round(a.pScore):'—'}</td>
+      <td style="font-size:11px">${s.quality}</td>
+      <td style="font-size:11px">${s.price}</td>
+      <td><span class="chip ${cls}">${act}</span></td>
+    </tr>`;
+  }).join('');
+}
+function renderStats() {
+  const fs=filtered(); const c={buy:0,hold:0,watch:0,avoid:0};
+  fs.forEach(s=>c[getAction(s)]++);
+  document.getElementById('stats-row').innerHTML=`
+    <div class="stat-card"><div class="stat-val" style="color:#3B6D11">${c.buy}</div><div class="stat-lbl">Buy</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#185FA5">${c.hold}</div><div class="stat-lbl">Hold</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#854F0B">${c.watch}</div><div class="stat-lbl">Watch</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#A32D2D">${c.avoid}</div><div class="stat-lbl">Avoid</div></div>`;
+}
+function render(){renderSectors();renderMatrix();renderTable();renderStats();}
+render();
+</script>
+</body>
+</html>
