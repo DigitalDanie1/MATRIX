@@ -104,7 +104,7 @@ function setOverride(k,v){const s=STOCKS.find(x=>x.id===selectedId);state.overri
 function clearOverride(k){const s=STOCKS.find(x=>x.id===selectedId);if(!state.overrides?.[s.ticker])return;delete state.overrides[s.ticker][k];if(!Object.keys(state.overrides[s.ticker]).length)delete state.overrides[s.ticker];saveState();render();showDetail(selectedId)}
 function closeDetail(){$('detail').classList.remove('open');selectedId=null}
 function render(){renderButtons();renderFilters();renderStats();renderPicks();renderReports();renderMatrix();renderSide('buyList','buy');renderSide('sellList','sell');renderSide('bottomList','bottom');renderSide('avoidList','avoid');renderTable()}
-render();if(!state.lastUpdated||Date.now()-state.lastUpdated>10*60*1000)updateAll();
+render();
 </script>
 <script>
 (() => {
@@ -1506,6 +1506,121 @@ render();if(!state.lastUpdated||Date.now()-state.lastUpdated>10*60*1000)updateAl
 
   render();
   if (!state.lastUpdated || Date.now() - state.lastUpdated > 10 * 60 * 1000) updateAll();
+})();
+</script>
+<script>
+(() => {
+  async function fetchMarketApi(tickers) {
+    const results = {};
+    for (let i = 0; i < tickers.length; i += 60) {
+      const group = tickers.slice(i, i + 60);
+      const response = await fetch('/api/market?symbols=' + encodeURIComponent(group.join(',')));
+      if (!response.ok) throw new Error('API ' + response.status);
+      const data = await response.json();
+      Object.entries(data.results || {}).forEach(([ticker, item]) => {
+        if (item && !item.error && Number.isFinite(Number(item.last))) results[ticker] = item;
+      });
+    }
+    return results;
+  }
+
+  function fastFallbackScore(s, seed) {
+    const [q, p] = baseScore(s);
+    const drift = dailyDrift(s.ticker, seed);
+    const sectorBias = /AI|Power|Nuclear|Semis|Memory|Networking|Software/.test(s.sector) ? 2 : 0;
+    const changePct = Math.max(-18, Math.min(35, Math.round((q >= 72 ? 6 : q >= 55 ? 2 : -2) + drift * 1.2 + sectorBias)));
+    const volumeRatio = Math.max(.6, Math.round((1 + q / 80 + Math.max(0, changePct) / 12) * 10) / 10);
+    return {
+      q: clamp(q + Math.round(drift * .5) + sectorBias),
+      p: clamp(p + drift + sectorBias),
+      changePct,
+      volumeRatio,
+      high52: q >= 78 && changePct >= 6,
+      rising: changePct >= 3,
+      verified: false,
+      updatedAt: Date.now(),
+      note: 'API 미연결: 임시 점수 반영'
+    };
+  }
+
+  function scoreFromApi(s, item) {
+    const [q, p] = baseScore(s);
+    const change = Number(item.changePct || 0);
+    const vol = Number.isFinite(Number(item.volumeRatio)) ? Number(item.volumeRatio) : Math.max(.7, Math.min(3.5, 1 + Math.abs(change) / 5));
+    const nearHigh = Number.isFinite(Number(item.dist52Pct)) && Number(item.dist52Pct) >= -2;
+    const rising = change >= 2 || (item.aboveEma100 === true && change >= 0);
+    return {
+      q: clamp(q + (nearHigh ? 14 : rising ? 7 : 0) + (change >= 5 ? 4 : 0)),
+      p: clamp(p + (change >= 7 ? 10 : change >= 3 ? 5 : change <= -5 ? -8 : 0)),
+      changePct: Number(change.toFixed(2)),
+      volumeRatio: Number(vol.toFixed(2)),
+      high52: nearHigh,
+      rising,
+      verified: true,
+      updatedAt: item.marketTime ? new Date(item.marketTime).getTime() : Date.now(),
+      note: 'Vercel API 최신 시세 반영'
+    };
+  }
+
+  updateAll = async function() {
+    if (state.updating) return;
+    state.updating = true;
+    state.analysis = state.analysis || {};
+    const button = document.getElementById('updateBtn');
+    if (button) {
+      button.disabled = true;
+      button.textContent = '업데이트 중...';
+    }
+    $('progress').classList.add('open');
+    $('progFill').style.width = '5%';
+    $('progLabel').textContent = '최신 시세 API 확인 중';
+
+    const liveTickers = STOCKS.map(s => s.ticker).filter(t => /^[A-Z.]{1,10}$/.test(t));
+    let live = {};
+    try {
+      live = await fetchMarketApi(liveTickers);
+      state.live = { ...(state.live || {}), ...live };
+    } catch (error) {
+      state.liveError = Date.now();
+    }
+
+    const seed = Date.now();
+    for (let i = 0; i < STOCKS.length; i++) {
+      const s = STOCKS[i];
+      const item = state.live?.[s.ticker];
+      state.analysis[s.ticker] = item ? scoreFromApi(s, item) : fastFallbackScore(s, seed);
+      $('progLabel').textContent = '전체 업데이트 중 (' + (i + 1) + '/' + STOCKS.length + ') ' + s.ticker + (item ? ' · live' : ' · fallback');
+      $('progFill').style.width = Math.round(((i + 1) / STOCKS.length) * 100) + '%';
+      if (i % 8 === 0) {
+        saveState();
+        render();
+        await new Promise(resolve => setTimeout(resolve, 4));
+      }
+    }
+
+    state.lastUpdated = Date.now();
+    state.updating = false;
+    saveState();
+    render();
+    if (button) {
+      button.disabled = false;
+      button.textContent = '전체 업데이트';
+    }
+    setTimeout(() => {
+      $('progress').classList.remove('open');
+      $('progFill').style.width = '0%';
+    }, 500);
+  };
+
+  const apiRenderButtons = renderButtons;
+  renderButtons = function() {
+    apiRenderButtons();
+    if (!state.lastUpdated) return;
+    const liveCount = Object.keys(state.live || {}).length;
+    $('status').textContent = '마지막 전체 업데이트: ' + new Date(state.lastUpdated).toLocaleString() + (liveCount ? ' · 실시간 ' + liveCount + '개 반영' : ' · API 미연결 fallback');
+  };
+
+  render();
 })();
 </script>
 </body>
