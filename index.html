@@ -1791,5 +1791,131 @@ render();
   try { render(); } catch (error) { console.error(error); }
 })();
 </script>
+<script>
+(() => {
+  /*
+    V3 real data updater.
+    Uses /api/market on Vercel. Local file:// cannot use the API, so it reports
+    that clearly instead of pretending local scores are real data.
+  */
+  function scoreFromMarket(stock, item) {
+    const base = typeof baseScore === 'function' ? baseScore(stock) : [55, 50];
+    const q0 = base[0] || 55;
+    const p0 = base[1] || 50;
+    const change = Number(item.changePct || 0);
+    const volumeRatio = Number.isFinite(Number(item.volumeRatio)) ? Number(item.volumeRatio) : Math.max(0.7, Math.min(3.5, 1 + Math.abs(change) / 5));
+    const nearHigh = Number.isFinite(Number(item.dist52Pct)) && Number(item.dist52Pct) >= -2;
+    const rising = change >= 2 || (item.aboveEma100 === true && change >= 0);
+    return {
+      q: clamp(q0 + (nearHigh ? 14 : rising ? 7 : 0) + (change >= 5 ? 4 : 0)),
+      p: clamp(p0 + (change >= 7 ? 10 : change >= 3 ? 5 : change <= -5 ? -8 : 0)),
+      changePct: Number(change.toFixed(2)),
+      volumeRatio: Number(volumeRatio.toFixed(2)),
+      high52: nearHigh,
+      rising,
+      needsData: false,
+      verified: true,
+      price: Number(item.last),
+      source: item.source || 'Market',
+      updatedAt: item.marketTime ? new Date(item.marketTime).getTime() : Date.now(),
+      note: (item.source || 'Market') + ' 실제 시세 반영'
+    };
+  }
+
+  async function fetchMarketData(tickers) {
+    const results = {};
+    for (let i = 0; i < tickers.length; i += 50) {
+      const group = tickers.slice(i, i + 50);
+      const response = await fetch('/api/market?symbols=' + encodeURIComponent(group.join(',')), { cache: 'no-store' });
+      if (!response.ok) throw new Error('API ' + response.status);
+      const data = await response.json();
+      Object.entries(data.results || {}).forEach(([ticker, item]) => {
+        if (item && !item.error && Number.isFinite(Number(item.last))) results[ticker] = item;
+      });
+    }
+    return results;
+  }
+
+  function unlockButton() {
+    state.updating = false;
+    const button = document.getElementById('updateBtn');
+    if (button) {
+      button.disabled = false;
+      button.textContent = '전체 업데이트';
+    }
+  }
+
+  updateAll = async function() {
+    if (state.updating) return;
+    state.updating = true;
+    state.analysis = state.analysis || {};
+    state.live = state.live || {};
+    const button = document.getElementById('updateBtn');
+    if (button) {
+      button.disabled = true;
+      button.textContent = '실제 자료 업데이트 중...';
+    }
+    $('progress').classList.add('open');
+    $('progFill').style.width = '5%';
+
+    try {
+      if (location.protocol === 'file:') {
+        throw new Error('로컬 file://에서는 실제 자료 API가 없습니다. GitHub에 index.html + api/market.js를 올린 뒤 Vercel 배포 URL에서 전체 업데이트를 눌러야 실제 자료가 갱신됩니다.');
+      }
+
+      const tickers = STOCKS.map(s => s.ticker).filter(t => /^[A-Z.]{1,10}$/.test(t));
+      $('progLabel').textContent = '실제 시세 API 호출 중';
+      const live = await fetchMarketData(tickers);
+      state.live = { ...state.live, ...live };
+
+      let liveCount = 0;
+      for (let i = 0; i < STOCKS.length; i++) {
+        const stock = STOCKS[i];
+        const item = state.live?.[stock.ticker];
+        if (item && Number.isFinite(Number(item.last))) {
+          state.analysis[stock.ticker] = scoreFromMarket(stock, item);
+          liveCount++;
+        }
+        $('progLabel').textContent = '실제 자료 반영 중 (' + (i + 1) + '/' + STOCKS.length + ') ' + stock.ticker + (item ? ' · live' : ' · no data');
+        $('progFill').style.width = Math.round(((i + 1) / STOCKS.length) * 100) + '%';
+        if (i % 20 === 0) await new Promise(resolve => setTimeout(resolve, 1));
+      }
+
+      state.lastUpdated = Date.now();
+      state.lastLiveCount = liveCount;
+      state.lastUpdateMode = 'real';
+      saveState();
+      $('progLabel').textContent = '실제 자료 업데이트 완료 · ' + liveCount + '개 반영';
+      render();
+    } catch (error) {
+      state.lastUpdateMode = 'error';
+      state.lastUpdateError = error.message || String(error);
+      $('progLabel').textContent = state.lastUpdateError;
+      $('status').textContent = state.lastUpdateError;
+      saveState();
+    } finally {
+      unlockButton();
+      setTimeout(() => {
+        $('progress').classList.remove('open');
+        $('progFill').style.width = '0%';
+      }, 1200);
+    }
+  };
+
+  const v3RenderButtons = renderButtons;
+  renderButtons = function() {
+    v3RenderButtons();
+    if (state.lastUpdateMode === 'real' && state.lastUpdated) {
+      $('status').textContent = '마지막 실제 자료 업데이트: ' + new Date(state.lastUpdated).toLocaleString() + ' · live ' + (state.lastLiveCount || 0) + '개 반영';
+    } else if (state.lastUpdateMode === 'error' && state.lastUpdateError) {
+      $('status').textContent = state.lastUpdateError;
+    }
+    unlockButton();
+  };
+
+  unlockButton();
+  render();
+})();
+</script>
 </body>
 </html>
