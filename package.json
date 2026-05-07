@@ -1,8 +1,0 @@
-{
-  "name": "matrix",
-  "private": true,
-  "version": "1.0.0",
-  "scripts": {
-    "build": "mkdir -p dist && cp index.html dist/index.html"
-  }
-}
