@@ -1,0 +1,27 @@
+{
+  "name": "ai-infra-dashboard",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "refresh:data": "node scripts/refresh-market-data.mjs",
+    "predev": "npm run refresh:data",
+    "prebuild": "npm run refresh:data",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "assistant:briefing": "node assistant-kit/scripts/run-skill.mjs daily-briefing",
+    "assistant:screening": "node assistant-kit/scripts/run-skill.mjs screening screening",
+    "assistant:schedule": "node assistant-kit/scripts/run-schedule.mjs",
+    "assistant:install-scheduler": "node assistant-kit/scripts/install-launchd.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "yahoo-finance2": "^3.14.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "vite": "^7.1.7"
+  }
+}
