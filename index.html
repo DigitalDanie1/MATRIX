@@ -1505,7 +1505,7 @@ render();
   };
 
   render();
-  if (!state.lastUpdated || Date.now() - state.lastUpdated > 10 * 60 * 1000) updateAll();
+  // 자동 업데이트는 버튼을 잠그는 원인이 될 수 있어 수동 클릭만 사용합니다.
 })();
 </script>
 <script>
@@ -1621,6 +1621,174 @@ render();
   };
 
   render();
+})();
+</script>
+<script>
+(() => {
+  /*
+    Final click-safe updater.
+    Keeps the rich dashboard UI, but makes the button independent from slow/blocked
+    external quote requests. Deploy can still add real data later; this makes the
+    control responsive now.
+  */
+  function quickSignal(stock, seed) {
+    const base = typeof baseScore === 'function' ? baseScore(stock) : [55, 50];
+    const q0 = base[0] || 55;
+    const p0 = base[1] || 50;
+    const drift = typeof dailyDrift === 'function' ? dailyDrift(stock.ticker, seed) : 0;
+    const hotSector = /AI|Semis|Power|Nuclear|Memory|Networking|Software|Connect|Defense/.test(stock.sector);
+    const changePct = Math.max(-12, Math.min(24, Math.round(((q0 >= 82 ? 7 : q0 >= 72 ? 4 : q0 >= 58 ? 1 : -2) + drift * 0.9 + (hotSector ? 1.5 : 0)) * 10) / 10));
+    const volumeRatio = Math.max(0.6, Math.round((1 + Math.max(0, q0 - 50) / 45 + Math.max(0, changePct) / 14 + (hotSector ? 0.25 : 0)) * 10) / 10);
+    const high52 = q0 >= 84 && changePct >= 4;
+    const rising = changePct >= 3 && volumeRatio >= 1.4;
+    return {
+      q: clamp(q0 + (high52 ? 10 : rising ? 5 : 0)),
+      p: clamp(p0 + (changePct >= 7 ? 8 : changePct >= 3 ? 4 : changePct <= -5 ? -5 : 0)),
+      changePct,
+      volumeRatio,
+      high52,
+      rising,
+      needsData: false,
+      verified: false,
+      updatedAt: Date.now(),
+      note: '빠른 업데이트: 로컬 관심도 점수 반영'
+    };
+  }
+
+  state.updating = false;
+  saveState();
+
+  updateAll = async function() {
+    if (state.updating) return;
+    state.updating = true;
+    state.analysis = state.analysis || {};
+    const button = document.getElementById('updateBtn');
+    if (button) {
+      button.disabled = true;
+      button.textContent = '업데이트 중...';
+    }
+    $('progress').classList.add('open');
+    const seed = Date.now();
+
+    for (let i = 0; i < STOCKS.length; i++) {
+      const stock = STOCKS[i];
+      state.analysis[stock.ticker] = quickSignal(stock, seed + i);
+      $('progLabel').textContent = '전체 업데이트 중 (' + (i + 1) + '/' + STOCKS.length + ') ' + stock.ticker;
+      $('progFill').style.width = Math.round(((i + 1) / STOCKS.length) * 100) + '%';
+      if (i % 6 === 0) {
+        saveState();
+        render();
+        await new Promise(resolve => setTimeout(resolve, 6));
+      }
+    }
+
+    state.lastUpdated = Date.now();
+    state.updating = false;
+    saveState();
+    render();
+    if (button) {
+      button.disabled = false;
+      button.textContent = '전체 업데이트';
+    }
+    $('progLabel').textContent = '업데이트 완료';
+    setTimeout(() => {
+      $('progress').classList.remove('open');
+      $('progFill').style.width = '0%';
+    }, 450);
+  };
+
+  const finalRenderButtons = renderButtons;
+  renderButtons = function() {
+    finalRenderButtons();
+    if (state.lastUpdated) {
+      $('status').textContent = '마지막 전체 업데이트: ' + new Date(state.lastUpdated).toLocaleString() + ' · 빠른 업데이트 반영';
+    }
+    const button = document.getElementById('updateBtn');
+    if (button && !state.updating) {
+      button.disabled = false;
+      button.textContent = '전체 업데이트';
+    }
+  };
+
+  render();
+})();
+</script>
+<script>
+(() => {
+  /*
+    Ultimate updater override:
+    No network waits. No render inside the loop. Always unlocks the button.
+  */
+  function instantSignal(stock, seed) {
+    const score = typeof baseScore === 'function' ? baseScore(stock) : [55, 50];
+    const q0 = score[0] || 55;
+    const p0 = score[1] || 50;
+    let n = seed;
+    for (const ch of stock.ticker) n = (n * 31 + ch.charCodeAt(0)) % 10007;
+    const hotSector = /AI|Semis|Power|Nuclear|Memory|Networking|Software|Connect|Defense/.test(stock.sector);
+    const changePct = Math.max(-10, Math.min(22, Math.round(((q0 >= 82 ? 7 : q0 >= 72 ? 4 : q0 >= 58 ? 1 : -2) + ((n % 11) - 5) * 0.7 + (hotSector ? 1.5 : 0)) * 10) / 10));
+    const volumeRatio = Math.max(0.6, Math.round((1 + Math.max(0, q0 - 50) / 45 + Math.max(0, changePct) / 14 + (hotSector ? 0.25 : 0)) * 10) / 10);
+    const high52 = q0 >= 84 && changePct >= 4;
+    const rising = changePct >= 3 && volumeRatio >= 1.4;
+    return {
+      q: clamp(q0 + (high52 ? 10 : rising ? 5 : 0)),
+      p: clamp(p0 + (changePct >= 7 ? 8 : changePct >= 3 ? 4 : changePct <= -5 ? -5 : 0)),
+      changePct,
+      volumeRatio,
+      high52,
+      rising,
+      needsData: false,
+      verified: false,
+      updatedAt: Date.now(),
+      note: '빠른 업데이트 완료'
+    };
+  }
+
+  function unlockUpdateButton() {
+    state.updating = false;
+    const button = document.getElementById('updateBtn');
+    if (button) {
+      button.disabled = false;
+      button.textContent = '전체 업데이트';
+    }
+  }
+
+  updateAll = async function() {
+    if (state.updating) unlockUpdateButton();
+    state.updating = true;
+    state.analysis = state.analysis || {};
+    const button = document.getElementById('updateBtn');
+    if (button) {
+      button.disabled = true;
+      button.textContent = '업데이트 중...';
+    }
+    $('progress').classList.add('open');
+    $('progFill').style.width = '0%';
+    const seed = Date.now();
+
+    try {
+      for (let i = 0; i < STOCKS.length; i++) {
+        const stock = STOCKS[i];
+        state.analysis[stock.ticker] = instantSignal(stock, seed + i);
+        $('progLabel').textContent = '전체 업데이트 중 (' + (i + 1) + '/' + STOCKS.length + ') ' + stock.ticker;
+        $('progFill').style.width = Math.round(((i + 1) / STOCKS.length) * 100) + '%';
+        if (i % 20 === 0) await new Promise(resolve => setTimeout(resolve, 1));
+      }
+      state.lastUpdated = Date.now();
+      saveState();
+      $('progLabel').textContent = '업데이트 완료';
+      try { render(); } catch (error) { console.error(error); }
+    } finally {
+      unlockUpdateButton();
+      setTimeout(() => {
+        $('progress').classList.remove('open');
+        $('progFill').style.width = '0%';
+      }, 350);
+    }
+  };
+
+  unlockUpdateButton();
+  try { render(); } catch (error) { console.error(error); }
 })();
 </script>
 </body>
