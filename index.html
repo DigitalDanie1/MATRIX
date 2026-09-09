@@ -22,7 +22,7 @@ body::after{content:'';position:fixed;inset:0;background:
   repeating-linear-gradient(135deg,transparent 0,transparent 15px,rgba(17,17,17,.018) 15px,rgba(17,17,17,.018) 16px);
 pointer-events:none;z-index:0}
 .wrap{max-width:1520px;margin:0 auto;position:relative;z-index:1}
-.content-grid{display:grid;grid-template-columns:230px minmax(0,1fr) 230px;gap:12px;align-items:start}
+.content-grid{display:block}
 .main-column{min-width:0}
 .side-panel{background:rgba(255,255,255,.94);border:1px solid #e5e5e5;border-radius:12px;margin-bottom:12px;overflow:hidden;position:sticky;top:14px;backdrop-filter:blur(10px)}
 .side-panel + .side-panel{top:330px}
@@ -107,7 +107,7 @@ pointer-events:none;z-index:0}
 .sc-legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:11px;color:#777}
 .sc-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:0}
 .sc-hint{font-size:10px;color:#aaa;margin-left:auto}
-.y-label-txt{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;color:#888;letter-spacing:0.05em;white-space:nowrap;text-align:center;padding-right:2px}
+.y-label-txt{writing-mode:vertical-rl;text-orientation:sideways;transform:rotate(180deg);font-size:11px;font-weight:600;color:#888;letter-spacing:.02em;white-space:nowrap;text-align:center;padding-right:2px}
 .y-ticks{display:flex;flex-direction:column;justify-content:space-around;height:520px;text-align:right;margin-right:6px}
 .y-tick{font-size:9px;color:#bbb;white-space:nowrap}
 .matrix-wrap{flex:1}
@@ -168,6 +168,10 @@ pointer-events:none;z-index:0}
 .table-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid #eee;flex-wrap:wrap}
 .table-meta{font-size:11px;color:#888;line-height:1.45}
 .table-actions{display:flex;gap:6px;flex-wrap:wrap}
+.table-select{font-size:11px;padding:6px 26px 6px 10px;border-radius:7px;border:1px solid #ddd;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23888'/></svg>") no-repeat right 9px center;color:#444;cursor:pointer;appearance:none}
+.table-select:hover{border-color:#111;color:#111}
+.sector-select{font-size:12px;padding:7px 28px 7px 12px;background-position:right 10px center}
+.filter-stack{gap:0}
 .btn-ghost{font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;transition:all 0.12s}
 .btn-ghost:hover,.btn-ghost.active{border-color:#111;color:#111;background:#fafafa}
 .btn-ghost.loading{opacity:0.6;cursor:not-allowed}
@@ -190,10 +194,33 @@ tr.row:hover td{background:#f8f8f8}
 .mkt-badge.bad{background:#FCEBEB;color:#A32D2D;border-color:#F7C1C1}
 .mkt-badge.watch{background:#FAEEDA;color:#854F0B;border-color:#FAC775}
 .mkt-badge.info{background:#E6F1FB;color:#185FA5;border-color:#B5D4F4}
+.more-row td{text-align:center;padding:12px;background:#fafafa}
 .mkt-date{font-size:10px;color:#888;line-height:1.35;white-space:nowrap}
 .mkt-date strong{display:block;color:#444;font-size:11px;font-weight:700}
 .valuation-note{margin-top:10px;padding-top:10px;border-top:1px solid #e5e5e5;color:#444}
 .field-lbl{font-size:11px;color:#666;margin-bottom:3px}
+/* ── 오늘의 판단: 첫 화면에서 결론 하나만 말한다 ── */
+.verdict{background:rgba(255,255,255,.96);border:1px solid #e5e5e5;border-radius:14px;margin-bottom:1rem;overflow:hidden;position:relative}
+.verdict::after{content:'KD';position:absolute;right:14px;bottom:8px;font-size:42px;font-weight:900;color:rgba(17,17,17,.026);pointer-events:none}
+.verdict-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:15px 16px 12px;flex-wrap:wrap}
+.verdict-lede{min-width:260px;flex:1}
+.verdict-kicker{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#3B6D11;margin-bottom:5px}
+.verdict-line{font-size:16px;font-weight:600;line-height:1.5;letter-spacing:-.01em;color:#1a1a1a}
+.verdict-line em{font-style:normal;font-weight:800}
+.verdict-stats{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.vstat{display:flex;align-items:baseline;gap:5px;padding:5px 11px;border-radius:999px;border:1px solid #e5e5e5;background:#fff;cursor:pointer;transition:border-color .12s,background .12s}
+.vstat:hover{border-color:#999}
+.vstat.active{border-color:currentColor;background:#fafafa}
+.vstat b{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.vstat span{font-size:11px;color:#888}
+.verdict .tabs{padding:0 16px;align-items:center}
+.verdict-sub{font-size:11px;color:#999;margin-left:auto;line-height:1.4;max-width:100%}
+.verdict-foot{padding:0 16px 13px;font-size:11px;color:#aaa;line-height:1.5}
+.verdict .picks-grid{padding:12px 16px}
+.hub-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:14px;padding:11px 14px;background:rgba(255,255,255,.7);border:1px solid #ececec;border-radius:12px}
+.hub-row-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#aaa;margin-right:4px}
+.hub-chip{font-size:11px;padding:4px 11px;border-radius:999px;border:1px solid #e2e2e2;background:#fff;color:#666;text-decoration:none}
+.hub-chip:hover{border-color:#111;color:#111}
 .picks-section{background:rgba(255,255,255,.96);border-radius:12px;border:1px solid #e5e5e5;margin-bottom:1rem;overflow:hidden;position:relative}
 .picks-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid #eee}
 .picks-title{font-size:14px;font-weight:600}
@@ -221,13 +248,20 @@ tr.row:hover td{background:#f8f8f8}
 .local-chart .area{fill:#E6F1FB;opacity:.75}
 .local-chart .last-dot{fill:#185FA5;stroke:#fff;stroke-width:2}
 .local-chart .ema-line{fill:none;stroke:#854F0B;stroke-width:1.4;stroke-dasharray:4 4}
+.local-chart.bare{height:172px}
+.local-chart.bare svg{height:168px}
+.pick-facts{display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:8px 10px;border-top:1px solid #eee;font-size:10.5px;color:#777;font-variant-numeric:tabular-nums}
+.pick-facts b{font-weight:700}
+.pick-facts .dot{color:#ddd}
+.pick-score span{color:#aaa}
+.pick-score b{font-size:12px;font-weight:700;color:#333;font-variant-numeric:tabular-nums}
 .chart-link{display:block;padding:7px 10px;border-top:1px solid #eee;color:#666;text-decoration:none;font-size:11px;background:#fafafa}
 .chart-link:hover{color:#111;background:#f3f3f3}
 .hl-buy{background:#EAF3DE;color:#2f5c0d;border:1px solid #C0DD97;border-radius:5px;padding:1px 5px;font-weight:700}
 .hl-wait{background:#FAEEDA;color:#7b4908;border:1px solid #FAC775;border-radius:5px;padding:1px 5px;font-weight:700}
 .hl-avoid{background:#FCEBEB;color:#9d2929;border:1px solid #F7C1C1;border-radius:5px;padding:1px 5px;font-weight:700}
 .hl-info{background:#E6F1FB;color:#185FA5;border:1px solid #B5D4F4;border-radius:5px;padding:1px 5px;font-weight:700}
-@media(max-width:1180px){.content-grid{grid-template-columns:1fr}.side-panel{position:static}.side-list{display:grid;grid-template-columns:repeat(3,1fr)}}
+
 @media(max-width:760px){
   body{padding:1rem}
   .stats-row,.picks-grid,.cell-stock-list,.side-list,.detail-links{grid-template-columns:1fr}
@@ -260,7 +294,6 @@ tr.row:hover td{background:#f8f8f8}
   <div class="toolbar">
     <div class="filter-stack">
       <div class="filter-row" id="sector-filters"></div>
-      <div class="filter-row" id="action-filters"></div>
     </div>
     <button class="lang-toggle" id="lang-btn" onclick="toggleLanguage()" title="Switch language"><span class="lang-dot"></span><span id="lang-main">English</span><span class="lang-sub" id="lang-sub">EN</span></button>
     <button class="btn-primary" id="analyze-btn" onclick="analyzeAll()">▶ 전체 분석</button>
@@ -268,30 +301,6 @@ tr.row:hover td{background:#f8f8f8}
 </div>
 
 <div class="content-grid">
-<aside>
-  <div class="side-panel">
-    <div class="side-head">
-      <div class="side-title">StockHub</div>
-      <div class="side-subtitle">뉴스·시장·리서치 컨텍스트 빠르게 확인</div>
-    </div>
-    <div class="link-grid">
-      <a class="hub-link" href="https://stockhub.kr/news" target="_blank" rel="noopener"><b>뉴스</b>실시간 속보</a>
-      <a class="hub-link" href="https://stockhub.kr/market" target="_blank" rel="noopener"><b>시장</b>시장 한눈에</a>
-      <a class="hub-link" href="https://stockhub.kr/insights" target="_blank" rel="noopener"><b>인사이트</b>매크로/종목</a>
-      <a class="hub-link" href="https://stockhub.kr/research" target="_blank" rel="noopener"><b>리서치</b>팩터 검색</a>
-      <a class="hub-link" href="https://stockhub.kr/smart-money" target="_blank" rel="noopener"><b>스마트머니</b>13F/수급</a>
-      <a class="hub-link" href="https://stockhub.kr/calendar" target="_blank" rel="noopener"><b>일정</b>경제/실적</a>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="side-head">
-      <div class="side-title">오늘의 팔로우업</div>
-      <div class="side-subtitle">주도주 후보 중 눌림목을 기다릴 종목</div>
-    </div>
-    <div class="side-list" id="today-follow-list"></div>
-  </div>
-</aside>
-
 <main class="main-column">
 
 <div class="progress-wrap" id="prog-wrap">
@@ -299,22 +308,22 @@ tr.row:hover td{background:#f8f8f8}
   <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
 </div>
 
-<div class="stats-row" id="stats-row"></div>
-
-<div class="picks-section">
-  <div class="picks-head">
-    <div>
-      <div class="picks-title" id="picks-title">Sector Top 3</div>
-      <div class="picks-subtitle" id="picks-subtitle">크게 움직인 주도주를 팔로우하다가 눌림목을 기다리는 후보</div>
+<div class="verdict">
+  <div class="verdict-head">
+    <div class="verdict-lede">
+      <div class="verdict-kicker" id="verdict-kicker">오늘의 판단</div>
+      <div class="verdict-line" id="verdict-line">시장 데이터를 불러오는 중...</div>
     </div>
-    <div class="tabs">
-      <button class="tab-btn active" id="tab-pullback" onclick="setPickTab('pullback')">눌림목 후보</button>
-      <button class="tab-btn" id="tab-avoid" onclick="setPickTab('avoid')">사지 말 것</button>
-      <button class="tab-btn" id="tab-patience" onclick="setPickTab('patience')">좋지만 기다림</button>
-      <button class="tab-btn" id="tab-risk" onclick="setPickTab('risk')">리스크 대비 우수</button>
-    </div>
+    <div class="verdict-stats" id="stats-row"></div>
+  </div>
+  <div class="tabs" id="pick-tabs">
+    <button class="tab-btn active" id="tab-pullback" onclick="setPickTab('pullback')">지금 볼 것</button>
+    <button class="tab-btn" id="tab-avoid" onclick="setPickTab('avoid')">피할 것</button>
+    <button class="tab-btn" id="tab-patience" onclick="setPickTab('patience')">좋지만 비쌈</button>
+    <button class="tab-btn" id="tab-risk" onclick="setPickTab('risk')">안전한 편</button>
   </div>
   <div class="picks-grid" id="picks-grid"></div>
+  <div class="verdict-foot" id="picks-title"></div>
 </div>
 
 <div class="matrix-section">
@@ -339,23 +348,23 @@ tr.row:hover td{background:#f8f8f8}
     </div>
   </div>
   <div class="matrix-outer" id="grid-wrap">
-    <div class="y-label-txt">← 진입 매력 →</div>
+    <div class="y-label-txt">↑ 지금 사기 좋은 자리</div>
     <div class="y-ticks">
-      <div class="y-tick">LOW DESIRE ▲</div>
-      <div class="y-tick">WATCH ZONE</div>
-      <div class="y-tick">▼ HIGH DESIRE</div>
+      <div class="y-tick">사기 좋음</div>
+      <div class="y-tick">중립</div>
+      <div class="y-tick">지금은 아님</div>
     </div>
     <div class="matrix-wrap">
       <div class="x-labels">
-        <div class="x-label">HIGH MAGNETISM</div>
-        <div class="x-label">SOLID STORY</div>
-        <div class="x-label">WEAK PULL</div>
+        <div class="x-label">관심 낮음</div>
+        <div class="x-label">보통</div>
+        <div class="x-label">갖고 싶은 종목</div>
       </div>
       <div class="matrix" id="matrix"></div>
       <div class="x-bottom">
-        <div style="font-size:9px;color:#bbb;padding-left:4px">← Wanted</div>
-        <div style="font-size:9px;color:#bbb;text-align:center">Mid</div>
-        <div style="font-size:9px;color:#bbb;text-align:right;padding-right:4px">Ignored →</div>
+        <div style="font-size:9px;color:#bbb;padding-left:4px">← 종목 점수 낮음</div>
+        <div style="font-size:9px;color:#bbb;text-align:center"></div>
+        <div style="font-size:9px;color:#bbb;text-align:right;padding-right:4px">종목 점수 높음 →</div>
       </div>
     </div>
   </div>
@@ -376,11 +385,11 @@ tr.row:hover td{background:#f8f8f8}
     <div class="detail-close" onclick="closeDetail()">×</div>
   </div>
   <div class="score-bar-wrap">
-    <div class="score-label"><span>종목 매력도</span><span id="q-val">—</span></div>
+    <div class="score-label"><span>종목 점수 — 얼마나 갖고 싶은 종목인가</span><span id="q-val">—</span></div>
     <div class="score-track"><div class="score-fill" id="q-bar" style="width:0%;background:#3B6D11"></div></div>
   </div>
   <div class="score-bar-wrap">
-    <div class="score-label"><span>진입 매력도</span><span id="p-val">—</span></div>
+    <div class="score-label"><span>자리 점수 — 지금 사기 좋은 자리인가</span><span id="p-val">—</span></div>
     <div class="score-track"><div class="score-fill" id="p-bar" style="width:0%;background:#185FA5"></div></div>
   </div>
   <div class="detail-links" id="detail-links"></div>
@@ -388,7 +397,7 @@ tr.row:hover td{background:#f8f8f8}
   <div class="ai-box" id="ai-box">분석 없음</div>
   <div class="override-row">
     <div>
-      <div class="field-lbl">종목 매력 수동 조정</div>
+      <div class="field-lbl">종목 점수 수동 조정</div>
       <div class="seg" id="seg-q">
         <div class="seg-btn" data-val="great" onclick="seg('q','great')">Wanted</div>
         <div class="seg-btn" data-val="good" onclick="seg('q','good')">Solid</div>
@@ -396,7 +405,7 @@ tr.row:hover td{background:#f8f8f8}
       </div>
     </div>
     <div>
-      <div class="field-lbl">진입 매력 수동 조정</div>
+      <div class="field-lbl">자리 점수 수동 조정</div>
       <div class="seg" id="seg-p">
         <div class="seg-btn" data-val="great" onclick="seg('p','great')">High</div>
         <div class="seg-btn" data-val="good" onclick="seg('p','good')">Watch</div>
@@ -415,68 +424,81 @@ tr.row:hover td{background:#f8f8f8}
   <div class="table-tools">
     <div class="table-meta" id="table-meta">총 0개 종목 · 시장 데이터는 필요할 때 무료로 불러옵니다</div>
     <div class="table-actions">
-      <button class="btn-ghost" id="market-load-btn" onclick="loadMarketData()">시장 데이터 로드</button>
-      <button class="btn-ghost" data-market-view="change" onclick="setMarketView('change')">24h 변화순</button>
-      <button class="btn-ghost" data-market-view="high52" onclick="setMarketView('high52')">52주 신고가 근처</button>
-      <button class="btn-ghost" data-market-view="emaAbove" onclick="setMarketView('emaAbove')">100EMA 위</button>
-      <button class="btn-ghost" data-market-view="emaBelow" onclick="setMarketView('emaBelow')">100EMA 아래</button>
-      <button class="btn-ghost" id="fund-load-btn" onclick="loadFundamentals()">밸류/의견 로드</button>
-      <button class="btn-ghost" data-market-view="targetUpside" onclick="setMarketView('targetUpside')">목표가 여력순</button>
-      <button class="btn-ghost" onclick="setMarketView(null)">해제</button>
+      <select class="table-select" id="market-view-select" onchange="setMarketView(this.value)">
+        <option value="">정렬 · 기본</option>
+        <option value="change">24h 변화순</option>
+        <option value="high52">52주 신고가 근처</option>
+        <option value="emaAbove">100EMA 위만</option>
+        <option value="emaBelow">100EMA 아래만</option>
+        <option value="targetUpside">목표가 여력순</option>
+      </select>
     </div>
   </div>
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>티커</th><th>회사명</th><th>섹터</th><th>매력</th><th>진입</th><th>종목</th><th>상황</th><th>기준일</th><th>24h</th><th>52W</th><th>100EMA</th><th>밸류</th><th>증권가</th><th>액션</th>
+        <th>티커</th><th>회사명</th><th>섹터</th><th>종목</th><th>자리</th><th>판정</th><th>24h</th><th>52주</th><th>100EMA</th><th>밸류</th><th>목표가</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
   </div>
 </div>
 
-</main>
+<div class="hub-row">
+  <span class="hub-row-label">StockHub</span>
+  <a class="hub-chip" href="https://stockhub.kr/news" target="_blank" rel="noopener">뉴스</a>
+  <a class="hub-chip" href="https://stockhub.kr/market" target="_blank" rel="noopener">시장</a>
+  <a class="hub-chip" href="https://stockhub.kr/insights" target="_blank" rel="noopener">인사이트</a>
+  <a class="hub-chip" href="https://stockhub.kr/research" target="_blank" rel="noopener">리서치</a>
+  <a class="hub-chip" href="https://stockhub.kr/smart-money" target="_blank" rel="noopener">스마트머니</a>
+  <a class="hub-chip" href="https://stockhub.kr/calendar" target="_blank" rel="noopener">일정</a>
+</div>
 
-<aside>
-  <div class="side-panel">
-    <div class="side-head">
-      <div class="side-title">오늘의 주의</div>
-      <div class="side-subtitle">싸 보여도 수요가 약한 종목</div>
-    </div>
-    <div class="side-list" id="today-avoid-list"></div>
-  </div>
-  <div class="side-panel">
-    <div class="side-head">
-      <div class="side-title">좋지만 대기</div>
-      <div class="side-subtitle">좋은 종목이지만 추격보다 기다림</div>
-    </div>
-    <div class="side-list" id="today-patience-list"></div>
-  </div>
-  <div class="side-panel">
-    <div class="side-head">
-      <div class="side-title">차트 심볼 미확인</div>
-      <div class="side-subtitle">거래소 코드 확인 후 차트 표시 가능</div>
-    </div>
-    <div class="side-list" id="missing-chart-list"></div>
-  </div>
-</aside>
+</main>
 </div>
 </div>
 
 <script>
-// Y축 위→아래: low entry appeal → watch zone → high entry appeal
-// X축 왼→오:  high stock magnetism → solid story → weak buyer pull
+// 좋은 것이 오른쪽 위. X축 왼→오: 종목 점수 낮음 → 높음.
+// Y축 위→아래: 자리 점수 높음(사기 좋음) → 낮음(지금은 아님).
 const CELLS = [
-  {q:'great',p:'shit', cls:'patience',  label:'Patience',   hint:'Wanted, but crowded'},
-  {q:'good', p:'shit', cls:'neutral',   label:'No rush',    hint:'Needs better setup'},
-  {q:'shit', p:'shit', cls:'avoid',     label:'Avoid',      hint:'No buyer pull'},
-  {q:'great',p:'good', cls:'strong-buy',label:'Core buy',   hint:'Demand still works'},
-  {q:'good', p:'good', cls:'hold-good', label:'Hold/scale', hint:'Balanced setup'},
-  {q:'shit', p:'good', cls:'neutral',   label:'Spec watch', hint:'Needs catalyst'},
-  {q:'great',p:'great',cls:'jackpot',   label:'Magnet',     hint:'Buyers want more'},
-  {q:'good', p:'great',cls:'strong-buy',label:'Accum',      hint:'Good setup'},
-  {q:'shit', p:'great',cls:'neutral',   label:'Turnaround', hint:'Cheap needs proof'},
+  {q:'shit', p:'great',cls:'neutral',    key:'cheap'},
+  {q:'good', p:'great',cls:'strong-buy', key:'scale'},
+  {q:'great',p:'great',cls:'jackpot',    key:'buynow'},
+  {q:'shit', p:'good', cls:'neutral',    key:'catalyst'},
+  {q:'good', p:'good', cls:'hold-good',  key:'hold'},
+  {q:'great',p:'good', cls:'strong-buy', key:'core'},
+  {q:'shit', p:'shit', cls:'avoid',      key:'avoid'},
+  {q:'good', p:'shit', cls:'neutral',    key:'norush'},
+  {q:'great',p:'shit', cls:'patience',   key:'crowded'},
 ];
+// 칸 이름은 은어 대신 행동으로 쓴다.
+const CELL_COPY = {
+  ko:{
+    buynow:  ['지금 사도 되는 것', '수요도 자리도 좋다'],
+    scale:   ['나눠서 모을 것',   '자리는 좋다, 한 번에 말고'],
+    cheap:   ['싸지만 근거 부족', '자리만 좋고 이유가 약하다'],
+    core:    ['핵심 매수 후보',   '좋은 종목, 자리도 나쁘지 않다'],
+    hold:    ['보유·관망',        '지금 움직일 이유가 없다'],
+    catalyst:['촉매 나오면',      '이유가 생기면 그때'],
+    crowded: ['좋지만 지금 비쌈', '추격 부담이 크다'],
+    norush:  ['서두를 것 없음',   '더 좋은 자리를 기다려라'],
+    avoid:   ['건드리지 말 것',   '수요도 자리도 없다']
+  },
+  en:{
+    buynow:  ['Buy now',         'Demand and setup both work'],
+    scale:   ['Scale in',        'Good setup — but not all at once'],
+    cheap:   ['Cheap, unproven', 'Setup only; the reason is thin'],
+    core:    ['Core candidate',  'Strong name, setup is fine'],
+    hold:    ['Hold',            'No reason to move today'],
+    catalyst:['Needs catalyst',  'Wait for a reason'],
+    crowded: ['Good but pricey', 'Chasing costs too much here'],
+    norush:  ['No rush',         'Wait for a better setup'],
+    avoid:   ['Avoid',           'No demand, no setup']
+  }
+};
+const cellLabel = c => (CELL_COPY[uiLang] || CELL_COPY.ko)[c.key][0];
+const cellHint  = c => (CELL_COPY[uiLang] || CELL_COPY.ko)[c.key][1];
 const ACTION_MAP = {jackpot:'buy','strong-buy':'buy','hold-good':'hold',patience:'watch',neutral:'watch',avoid:'avoid'};
 const CHIP_CLS   = {buy:'chip-buy',hold:'chip-hold',watch:'chip-watch',avoid:'chip-avoid'};
 
@@ -692,6 +714,8 @@ let marketData={}, marketView=null, marketLoading=false, marketLoadedAt=null;
 let fundamentalsData={}, fundamentalsLoading=false, fundamentalsLoadedAt=null;
 let uiLang = localStorage.getItem('investment-matrix-lang') || 'ko';
 let matrixView = localStorage.getItem('investment-matrix-view') || 'grid';
+let tableLimit = 60;   // 203행을 한 번에 쏟지 않는다
+function showMoreRows(){ tableLimit += 120; renderTable(); }
 let statusState = null;   // {kind:'live'|'anchor'|'error', ...} — 언어 전환 시 다시 조립한다
 function setStatus(state){ statusState = state; renderStatus(); }
 function renderStatus(){
@@ -762,6 +786,18 @@ const EN = {
   solidStory:'Solid story',
   weakPull:'Weak pull',
   tasteMap:'Taste map',
+  actBuy:'buyable', actHold:'hold', actWatch:'wait', actAvoid:'avoid',
+  scoreStock:'Stock', scoreSetup:'Setup',
+  verdictKicker:"Today's call",
+  noneToday:'Nothing fits these filters. Widen them.',
+  pullWeak:'Low interest', pullMid:'Mid', pullStrong:'Names you want',
+  setupAxis:'↑ Good place to buy now',
+  setupHigh:'Good entry', setupMid:'Neutral', setupLow:'Not now',
+  stockAxisLow:'← Weaker name', stockAxisHigh:'Stronger name →',
+  countSuffix:' names',
+  verdict:'Verdict', w52:'52W', target:'Target',
+  sortDefault:'Sort · default',
+  clearFilter:'Clear filter',
   loading:'Loading...',
   sector:'Sector',
   action:'Action',
@@ -797,8 +833,8 @@ const EN = {
   price:'price',
   valueCount:'value',
   noCandidates:'No candidates match this filter',
-  stockQuality:'Stock quality',
-  entryAppeal:'Entry appeal',
+  stockQuality:'Stock score — how much you want to own it',
+  entryAppeal:'Setup score — is this a good place to buy now',
   noAnalysis:'No analysis yet',
   manualQuality:'Manual stock quality',
   manualEntry:'Manual entry appeal',
@@ -871,8 +907,8 @@ const pickCopyEn = {
   risk:'Best risk/reward candidates after quality, trend, and volatility burden'
 };
 const tabLabels = {
-  ko:{pullback:'눌림목 후보', avoid:'사지 말 것', patience:'좋지만 기다림', risk:'리스크 대비 우수'},
-  en:{pullback:'Pullback watch', avoid:'Do not buy', patience:'Good, wait', risk:'Best risk/reward'}
+  ko:{pullback:'지금 볼 것', avoid:'피할 것', patience:'좋지만 비쌈', risk:'안전한 편'},
+  en:{pullback:'Watch now', avoid:'Avoid', patience:'Good but pricey', risk:'Safest'}
 };
 const sectorGroupLabels = {
   en:{
@@ -1045,8 +1081,8 @@ function reasonList(s, qScore, pScore) {
     ];
   }
   return [
-    `종목 매력도 근거: ${scoreReason('stock', qScore)}`,
-    `진입 매력도 근거: ${scoreReason('entry', pScore)}`,
+    `종목 점수 근거: ${scoreReason('stock', qScore)}`,
+    `자리 점수 근거: ${scoreReason('entry', pScore)}`,
     `섹터 근거: ${sectorText}`
   ];
 }
@@ -1066,7 +1102,7 @@ function highlightConclusion(text) {
     [/눌림목|분할 진입|추가 매수|매수 명분|팔로우업|상단|강한 편|강하게|주도/g, 'hl-buy'],
     [/기다림|기다리는|기다릴|대기|관찰|확인|보유/g, 'hl-wait'],
     [/사지 말|피해야|약한|부족|어렵|리스크|변동성|추격 부담|새 돈을 넣기 어렵/g, 'hl-avoid'],
-    [/섹터 근거|종목 매력도 근거|진입 매력도 근거|참고용|내장 수요 모델/g, 'hl-info']
+    [/섹터 근거|종목 점수 근거|자리 점수 근거|참고용|내장 수요 모델/g, 'hl-info']
   ];
   rules.forEach(([pattern, cls]) => {
     html = html.replace(pattern, match => `<span class="${cls}">${match}</span>`);
@@ -1092,6 +1128,15 @@ const LIVE = {
 
 const bandClamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
+// 목표가 여력의 횡단면 중앙값. 이 값 대비 편차만 점수에 쓴다.
+let targetUpsideMedian = null;
+function computeTargetMedian() {
+  const ups = stocks.map(fundamentalsSnapshot)
+    .filter(f => fundamentalsUsable(f) && Number.isFinite(f.targetUpsidePct))
+    .map(f => f.targetUpsidePct).sort((a,b)=>a-b);
+  targetUpsideMedian = ups.length >= 20 ? ups[Math.floor(ups.length/2)] : null;
+}
+
 function anchorScores(s) {
   const base = STOCK_SCORES[s.ticker] || SECTOR_BASE[s.sector] || [55,45];
   return {
@@ -1114,8 +1159,8 @@ function liveEntryScore(m, f) {
   const dayPart = m.aboveEma100
     ? bandClamp(-c * 1.6, -11, 11)   // 추세 위에서의 하루 눌림은 기회
     : bandClamp(-c * 0.6, -6, 6);    // 추세 아래면 반등에 점수 덜 준다
-  const targetPart = (f && Number.isFinite(f.targetUpsidePct))
-    ? bandClamp(f.targetUpsidePct * 0.22, -7, 11) : 0;
+  const targetPart = (f && Number.isFinite(f.targetUpsidePct) && targetUpsideMedian != null)
+    ? bandClamp((f.targetUpsidePct - targetUpsideMedian) * 0.16, -8, 8) : 0;
   const raw = emaPart * 0.58 + peakPart * 0.42;
   return clampScore(LIVE.center + (raw - LIVE.pivot) * LIVE.spread + dayPart + targetPart);
 }
@@ -1155,6 +1200,7 @@ function localAnalysis(s, qScore, pScore) {
 
 // 전 종목 분류. 상수 조회라 즉시 끝난다 — 가짜 진행바 없음.
 function classifyAll() {
+  computeTargetMedian();
   let liveCount = 0;
   stocks.forEach(s => {
     const { qScore, pScore, live } = getScores(s);
@@ -1265,7 +1311,7 @@ function showCellDetail(q, p) {
     return (bs.qScore+bs.pScore) - (as.qScore+as.pScore);
   });
   document.getElementById('cell-panel').classList.add('open');
-  document.getElementById('cell-title').textContent = `${c.label} — ${fs.length}개 종목`;
+  document.getElementById('cell-title').textContent = `${cellLabel(c)} — ${fs.length}${txt('countSuffix','개 종목')}`;
   const top = ranked.slice(0,5).map(s=>s.ticker).join(', ') || (uiLang === 'en' ? 'No stocks' : '해당 종목 없음');
   document.getElementById('cell-summary').innerHTML = highlightConclusion(`${cellMeaning(c)} ${txt('representative','대표 종목')}: ${top}.`);
   document.getElementById('cell-stock-list').innerHTML = ranked.map(s=>{
@@ -1276,7 +1322,7 @@ function showCellDetail(q, p) {
         <div class="cell-stock-ticker">${s.ticker}</div>
         <div class="cell-stock-score">${txt('score','매력')} ${Math.round(qScore)}<br>${txt('entry','진입')} ${Math.round(pScore)}</div>
       </div>
-      <div class="cell-stock-note">${s.name}<br>${highlightConclusion(reasons[0].replace(uiLang === 'en' ? 'Stock quality basis: ' : '종목 매력도 근거: ',''))}</div>
+      <div class="cell-stock-note">${s.name}<br>${highlightConclusion(reasons[0].replace(uiLang === 'en' ? 'Stock quality basis: ' : '종목 점수 근거: ',''))}</div>
     </div>`;
   }).join('') || `<div class="cell-summary">${txt('noStocksInCell','현재 필터에서는 이 칸에 들어간 종목이 없습니다.')}</div>`;
   document.getElementById('cell-panel').scrollIntoView({behavior:'smooth', block:'start'});
@@ -1306,18 +1352,15 @@ function resetOverride() {
 function deleteStock() { stocks=stocks.filter(x=>x.id!==selectedId); closeDetail(); render(); }
 
 function renderSectors() {
-  const el=document.getElementById('sector-filters');
-  el.innerHTML = `<span class="filter-label">${txt('sector','Sector')}</span>` + SECTOR_GROUPS.map(g=>{
+  const el = document.getElementById('sector-filters');
+  const opts = SECTOR_GROUPS.map(g=>{
     const count = g.id === 'all' ? stocks.length : stocks.filter(s=>g.sectors.includes(s.sector)).length;
-    const side = g.type === 'kr' ? '🇰🇷' : g.type === 'us' ? '🇺🇸' : '';
-    return `<div class="tag ${activeSectorGroup===g.id?'active':''}" onclick="setSectorGroup('${g.id}')">${side} ${groupLabel(g)} <span style="opacity:.55">${count}</span></div>`;
+    const side = g.type === 'kr' ? '🇰🇷 ' : g.type === 'us' ? '🇺🇸 ' : '';
+    return `<option value="${g.id}"${activeSectorGroup===g.id?' selected':''}>${side}${groupLabel(g)} · ${count}</option>`;
   }).join('');
-  const actionEl = document.getElementById('action-filters');
-  actionEl.innerHTML = `<span class="filter-label">${txt('action','Action')}</span>` + ACTION_FILTERS.map(a=>{
-    const count = a.id === 'all' ? sectorFiltered().length : sectorFiltered().filter(s=>getAction(s)===a.id).length;
-    const label = a.id === 'all' ? txt('allAction','전체 액션') : a.label;
-    return `<div class="tag ${a.cls} ${activeActionFilter===a.id?'active':''}" onclick="setActionFilter('${a.id}')">${label} <span style="opacity:.55">${count}</span></div>`;
-  }).join('');
+  el.innerHTML = `<select class="table-select sector-select" onchange="setSectorGroup(this.value)">${opts}</select>`
+    + (activeActionFilter==='all' ? '' :
+      `<button class="tag active" onclick="setActionFilter('all')">${txt('clearFilter','필터 해제')} ×</button>`);
 }
 
 function sectorFiltered() {
@@ -1326,12 +1369,14 @@ function sectorFiltered() {
 }
 
 function setSectorGroup(id) {
+  tableLimit = 60;
   activeSectorGroup = id;
   activeActionFilter = 'all';
   render();
 }
 
 function setActionFilter(id) {
+  tableLimit = 60;
   activeActionFilter = id;
   render();
 }
@@ -1511,11 +1556,12 @@ async function loadMarketData() {
   }
 }
 
-async function loadFundamentals() {
+// 목표가 여력이 자리 점수에 들어가므로 필터와 무관하게 전 종목을 받는다.
+async function loadFundamentals(silent) {
   if (fundamentalsLoading) return;
-  const symbols = [...new Set(filtered().map(equitySymbol).filter(Boolean))];
+  const symbols = [...new Set(stocks.map(equitySymbol).filter(Boolean))];
   if (!symbols.length) {
-    alert(txt('noFundSymbols','현재 필터에는 무료 밸류/의견을 불러올 수 있는 미국 보통주 심볼이 없습니다.'));
+    if (!silent) alert(txt('noFundSymbols','밸류/의견을 불러올 수 있는 미국 보통주 심볼이 없습니다.'));
     return;
   }
   fundamentalsLoading = true;
@@ -1527,7 +1573,7 @@ async function loadFundamentals() {
     }
     fundamentalsLoadedAt = Date.now();
   } catch (err) {
-    alert(`${txt('fundamentalsFail','밸류/의견 데이터를 불러오지 못했습니다')}: ${err.message}`);
+    if (!silent) alert(`${txt('fundamentalsFail','밸류/의견 데이터를 불러오지 못했습니다')}: ${err.message}`);
   } finally {
     fundamentalsLoading = false;
     classifyAll();
@@ -1537,7 +1583,8 @@ async function loadFundamentals() {
 }
 
 function setMarketView(view) {
-  marketView = marketView === view ? null : view;
+  marketView = view || null;
+  tableLimit = 60;
   renderTable();
 }
 
@@ -1582,15 +1629,14 @@ function marketCells(s) {
   const m = marketSnapshot(s);
   if (!marketUsable(m)) {
     const msg = m && m.error ? txt('unsupported','지원 안됨') : txt('notLoaded','로드 전');
-    return `<td class="mkt-muted">—</td><td class="mkt-muted">—</td><td><span class="mkt-badge">${msg}</span></td><td class="mkt-muted">—</td>`;
+    return `<td class="mkt-muted">—</td><td><span class="mkt-badge">${msg}</span></td><td class="mkt-muted">—</td>`;
   }
   const changeCls = m.changePct >= 0 ? 'mkt-up' : 'mkt-down';
   const highCls = m.dist52Pct >= -1 ? 'good' : m.dist52Pct >= -8 ? 'watch' : '';
   const highText = m.dist52Pct >= -1 ? txt('highZone','신고가권') : formatPct(m.dist52Pct);
   const emaCls = m.aboveEma100 ? 'good' : 'bad';
   const emaText = `${m.aboveEma100 ? txt('above','위') : txt('below','아래')} ${formatPct(m.distEmaPct)}`;
-  return `<td><span class="mkt-date"><strong>${marketDate(m)}</strong>${uiLang === 'en' ? 'close' : '종가'}</span></td>
-    <td class="${changeCls}">${formatPct(m.changePct)}</td>
+  return `<td class="${changeCls}">${formatPct(m.changePct)}</td>
     <td><span class="mkt-badge ${highCls}">${highText}</span></td>
     <td><span class="mkt-badge ${emaCls}">${emaText}</span></td>`;
 }
@@ -1748,6 +1794,20 @@ function pickReason(tab, qScore, pScore) {
   return '주도 테마 안에서 매력은 강하고, 눌림목이 오면 다시 확인할 만한 후보입니다.';
 }
 
+// 카드용 압축 사실 한 줄
+function factsLine(s) {
+  const m = marketSnapshot(s);
+  if (!marketUsable(m)) return '';
+  const f = fundamentalsSnapshot(s);
+  const bits = [
+    `24h <b class="${m.changePct>=0?'mkt-up':'mkt-down'}">${formatPct(m.changePct)}</b>`,
+    `${txt('w52','52주')} ${formatPct(m.dist52Pct)}`,
+    `100EMA <b class="${m.aboveEma100?'mkt-up':'mkt-down'}">${formatPct(m.distEmaPct)}</b>`
+  ];
+  if (fundamentalsUsable(f) && Number.isFinite(f.targetUpsidePct)) bits.push(`${txt('target','목표가')} ${formatPct(f.targetUpsidePct)}`);
+  return `<div class="pick-facts">${bits.join('<span class="dot">·</span>')}</div>`;
+}
+
 function marketReason(s) {
   const m = marketSnapshot(s);
   if (!marketUsable(m)) return '';
@@ -1784,7 +1844,7 @@ function isKoreanStock(s) {
   return s.region === 'KR' || symbol.startsWith('KRX:') || symbol.startsWith('KOSDAQ:');
 }
 
-function localChartHtml(s) {
+function localChartHtml(s, opts={}) {
   const m = marketSnapshot(s);
   if (!marketUsable(m) || !Array.isArray(m.history) || m.history.length < 3) {
     return `<div class="chart-empty">${txt('localChartLoading','한국 종목 차트 데이터 불러오는 중...<br>잠시 후 자동 갱신됩니다')}</div>`;
@@ -1807,11 +1867,11 @@ function localChartHtml(s) {
   const emaY = Number.isFinite(m.ema100) ? y(m.ema100) : null;
   const firstDate = Array.isArray(m.history) && Number.isFinite(m.history[0]?.t) ? formatDate(m.history[0].t) : '';
   const lastDate = marketDate(m);
-  return `<div class="local-chart">
-    <div class="local-chart-head">
+  const head = opts.head === false ? '' : `<div class="local-chart-head">
       <div><div class="local-chart-title">${escapeHtml(s.ticker)}</div><div>${escapeHtml(s.name)}</div></div>
       <div class="local-chart-meta"><span class="${up ? 'mkt-up' : 'mkt-down'}">${formatPct(change)}</span><br>${Math.round(last).toLocaleString()} ${m.currency || ''}<br>${lastDate}</div>
-    </div>
+    </div>`;
+  return `<div class="local-chart${opts.head === false ? ' bare' : ''}">${head}
     <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${escapeHtml(s.ticker)} price chart">
       <line class="axis" x1="0" y1="${top}" x2="${w}" y2="${top}"></line>
       <line class="axis" x1="0" y1="${h-bottom}" x2="${w}" y2="${h-bottom}"></line>
@@ -1832,33 +1892,52 @@ function stockChartHtml(s) {
   return `<iframe class="chart-frame" title="${s.ticker} chart" srcdoc='${chartSrcDoc(symbol).replace(/'/g,'&#39;')}' loading="lazy" referrerpolicy="origin"></iframe>`;
 }
 
+// 첫 화면의 결론 한 줄. 탭에 따라 무엇을 하라는 건지 직접 말한다.
+function verdictSentence(picks) {
+  const names = picks.map(s=>s.ticker).join(' · ');
+  if (!picks.length) return txt('noneToday','지금 조건에 맞는 후보가 없다. 필터를 넓혀 보라.');
+  const em = `<em>${escapeHtml(names)}</em>`;
+  if (uiLang === 'en') {
+    if (activePickTab==='avoid')    return `Stay away from ${em} — no demand, no setup.`;
+    if (activePickTab==='patience') return `${em} are strong names, but too expensive to chase today.`;
+    if (activePickTab==='risk')     return `Cleanest risk/reward today: ${em} — trend alive, volatility contained.`;
+    return `Today's shortlist: ${em} — leaders whose setup still works.`;
+  }
+  if (activePickTab==='avoid')    return `${em} 는 건드리지 마라. 수요도 자리도 없다.`;
+  if (activePickTab==='patience') return `${em} 는 좋은 종목이지만 지금은 비싸다. 기다려라.`;
+  if (activePickTab==='risk')     return `손익비가 가장 나은 건 ${em}. 추세가 살아있고 변동 부담이 작다.`;
+  return `오늘 볼 것은 ${em}. 주도주인데 자리도 나쁘지 않다.`;
+}
+
 function renderPicks() {
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(`tab-${activePickTab}`)?.classList.add('active');
-  const liveText = marketLoadedAt
-    ? ` · ${txt('marketData','시장 데이터')} ${formatDateTime(marketLoadedAt)} ${txt('reflected','반영')}`
-    : ` · ${txt('defaultScores','시장 데이터 로드 전에는 기본 점수 기준')}`;
-  const group = SECTOR_GROUPS.find(g=>g.id===activeSectorGroup) || SECTOR_GROUPS[0];
-  document.getElementById('picks-title').textContent = `${groupLabel(group)} Top 3`;
-  document.getElementById('picks-subtitle').textContent = pickCopy(activePickTab) + liveText;
   const picks = getPicks(activePickTab);
+  const c = actionCounts();
+  const group = SECTOR_GROUPS.find(g=>g.id===activeSectorGroup) || SECTOR_GROUPS[0];
+
+  document.getElementById('verdict-line').innerHTML = verdictSentence(picks);
+  document.getElementById('picks-title').textContent = uiLang === 'en'
+    ? `${groupLabel(group)} · ${sectorFiltered().length} names · ${c.buy} buyable · ${c.avoid} to avoid${marketLoadedAt ? ` · market data ${formatDateTime(marketLoadedAt)}` : ''}`
+    : `${groupLabel(group)} ${sectorFiltered().length}종목 · 사도 됨 ${c.buy} · 피할 것 ${c.avoid}${marketLoadedAt ? ` · 시장 데이터 ${formatDateTime(marketLoadedAt)} 기준` : ''}`;
+
   if (!picks.length) {
-    document.getElementById('picks-grid').innerHTML = `<div class="chart-empty" style="grid-column:1/-1;height:120px">${txt('noCandidates','현재 조건에 맞는 후보가 없습니다')}</div>`;
+    document.getElementById('picks-grid').innerHTML = `<div class="chart-empty" style="grid-column:1/-1;height:110px">${txt('noCandidates','현재 조건에 맞는 후보가 없습니다')}</div>`;
     return;
   }
   document.getElementById('picks-grid').innerHTML = picks.map(s=>{
     const {qScore, pScore} = getScores(s);
-    const symbol = tvSymbol(s);
-    const link = fullChartUrl(s, symbol);
-    const reasons = reasonList(s, qScore, pScore);
-    const chart = stockChartHtml(s);
+    const link = fullChartUrl(s, tvSymbol(s));
+    const m = marketSnapshot(s);
+    const price = marketUsable(m) ? `${Math.round(m.last).toLocaleString()} ${m.currency || (isKoreanStock(s)?'KRW':'USD')}` : '';
     return `<div class="pick-card">
       <div class="pick-meta">
-        <div><div class="pick-symbol">${s.ticker}</div><div class="pick-name">${s.name}</div></div>
-        <div class="pick-score">${txt('score','매력')} ${Math.round(qScore)}<br>${txt('entry','진입')} ${Math.round(pScore)}</div>
+        <div><div class="pick-symbol">${s.ticker}</div><div class="pick-name">${s.name}${price?` · ${price}`:''}</div></div>
+        <div class="pick-score"><span>${txt('scoreStock','종목')}</span> <b>${Math.round(qScore)}</b><br><span>${txt('scoreSetup','자리')}</span> <b>${Math.round(pScore)}</b></div>
       </div>
-      ${chart}
-      <div class="pick-reason"><b>${txt('meaning','의미')}</b><br>${highlightConclusion(pickReason(activePickTab, qScore, pScore))}<br><b>${txt('basis','근거')}</b><br>${highlightConclusion(reasons[0].replace(uiLang === 'en' ? 'Stock quality basis: ' : '종목 매력도 근거: ',''))}<br>${highlightConclusion(reasons[1].replace(uiLang === 'en' ? 'Entry appeal basis: ' : '진입 매력도 근거: ',''))}${marketReason(s)}</div>
+      ${localChartHtml(s, {head:false})}
+      ${factsLine(s)}
+      <div class="pick-reason">${escapeHtml(pickReason(activePickTab, qScore, pScore))}</div>
       <a class="chart-link" href="${link}" target="_blank" rel="noopener">${txt('openTradingView','TradingView에서 열기')}</a>
     </div>`;
   }).join('');
@@ -1927,7 +2006,7 @@ function renderMatrix() {
   const sub = document.getElementById('matrix-sub');
   sub.classList.toggle('stale', !live);
   sub.innerHTML = `<span class="live-dot"></span>${live
-    ? txt('matrixLive','진입 매력을 실시간 가격으로 다시 계산한 좌표')
+    ? txt('matrixLive','자리 점수를 실시간 가격으로 다시 계산한 좌표')
     : txt('matrixAnchor','앵커 점수 (시장 데이터 대기 중)')}`;
   if (matrixView === 'scatter') { document.getElementById('matrix').innerHTML=''; renderScatter(); }
   else { document.getElementById('scatter').innerHTML=''; renderGrid(); }
@@ -1944,7 +2023,7 @@ function renderGrid() {
       const a=analyzed[s.ticker]; const loading=!a||!a.done; const act=getAction(s);
       return`<div class="chip ${loading?'chip-pending pulsing':CHIP_CLS[act]}" onclick="event.stopPropagation();showDetail(${s.id})">${s.ticker}${s.override?'*':''}</div>`;
     }).join('') + (rest>0?`<div class="chip-more">+${rest} ${txt('more','더보기')}</div>`:'');
-    return`<div class="cell ${c.cls}" onclick="showCellDetail('${c.q}','${c.p}')"><div class="cell-label">${c.label} <span style="opacity:.55;font-weight:500">${match.length}</span></div><div class="cell-hint">${c.hint}</div><div class="chips">${chips}</div></div>`;
+    return`<div class="cell ${c.cls}" onclick="showCellDetail('${c.q}','${c.p}')"><div class="cell-label">${escapeHtml(cellLabel(c))} <span style="opacity:.55;font-weight:500">${match.length}</span></div><div class="cell-hint">${escapeHtml(cellHint(c))}</div><div class="chips">${chips}</div></div>`;
   }).join('');
 }
 
@@ -1953,8 +2032,8 @@ function renderScatter() {
   const fs = filtered();
   const W=1000, H=640, PL=62, PR=26, PT=30, PB=32;
   const iw=W-PL-PR, ih=H-PT-PB;
-  const X = q => PL + (100-q)/100*iw;
-  const Y = p => PT + p/100*ih;
+  const X = q => PL + q/100*iw;          // 오른쪽으로 갈수록 종목 점수 높음
+  const Y = p => PT + (100-p)/100*ih;   // 위로 갈수록 자리 점수 높음
 
   // 라벨 충돌 격자. 존 제목이 먼저 자리를 잡고, 티커 라벨은 남은 곳에만 들어간다.
   const CW=44, CH=12, cols=Math.ceil(W/CW)+2, taken=new Set();
@@ -1964,21 +2043,25 @@ function renderScatter() {
       for(let xx=x0; xx<=x0+w; xx+=CW/2) taken.add(cellKey(xx,yy));
   };
 
-  // 배경 존 (격자와 동일한 의미 구획)
+  // 배경 존 (격자와 동일한 의미 구획). 제목은 따로 모아 점 위에 그린다.
+  const zoneLabels = [];
   const zones = CELLS.map(c=>{
     const [ql,qh]=BAND_RANGE[c.q], [pl,ph]=BAND_RANGE[c.p];
-    const x=X(qh), w=X(ql)-X(qh), y=Y(pl), hh=Y(ph)-Y(pl);
-    reserve(x+6, y+5, Math.max(c.label.length, c.hint.length)*6.2, 28);
-    return `<g><rect class="sc-zone" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${hh.toFixed(1)}" fill="${ZONE_FILL[c.cls]}" opacity=".55"/>`
-      + `<text class="sc-zone-label" x="${(x+9).toFixed(1)}" y="${(y+16).toFixed(1)}" fill="${ZONE_TEXT[c.cls]}" opacity=".85">${c.label}</text>`
-      + `<text class="sc-zone-hint" x="${(x+9).toFixed(1)}" y="${(y+28).toFixed(1)}">${c.hint}</text></g>`;
+    const x=X(ql), w=X(qh)-X(ql), y=Y(ph), hh=Y(pl)-Y(ph);
+    const bw = Math.max(cellLabel(c).length, cellHint(c).length)*7.4 + 14;
+    reserve(x+4, y+3, bw, 32);
+    zoneLabels.push(
+      `<rect x="${(x+4).toFixed(1)}" y="${(y+3).toFixed(1)}" width="${bw.toFixed(1)}" height="32" rx="6" fill="#fff" opacity=".62"/>`
+      + `<text class="sc-zone-label" x="${(x+9).toFixed(1)}" y="${(y+16).toFixed(1)}" fill="${ZONE_TEXT[c.cls]}">${escapeHtml(cellLabel(c))}</text>`
+      + `<text class="sc-zone-hint" x="${(x+9).toFixed(1)}" y="${(y+28).toFixed(1)}">${escapeHtml(cellHint(c))}</text>`);
+    return `<rect class="sc-zone" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${hh.toFixed(1)}" fill="${ZONE_FILL[c.cls]}" opacity=".55"/>`;
   }).join('');
 
   // 축 눈금
-  const xTicks=[100,70,45,0].map(q=>`<text class="sc-axis" x="${X(q).toFixed(1)}" y="${(H-10).toFixed(1)}" text-anchor="middle">${q}</text>`).join('')
-    + [[85,txt('highMagnet','매력 강함')],[57,txt('solidStory','견조')],[22,txt('weakPull','수요 약함')]]
+  const xTicks=[0,45,70,100].map(q=>`<text class="sc-axis" x="${X(q).toFixed(1)}" y="${(H-10).toFixed(1)}" text-anchor="middle">${q}</text>`).join('')
+    + [[22,txt('pullWeak','관심 낮음')],[57,txt('pullMid','보통')],[85,txt('pullStrong','갖고 싶은 종목')]]
       .map(([q,l])=>`<text class="sc-axis-strong" x="${X(q).toFixed(1)}" y="16" text-anchor="middle">${l}</text>`).join('');
-  const yTicks=[0,45,70,100].map(p=>`<text class="sc-axis" x="${(PL-9).toFixed(1)}" y="${(Y(p)+3.5).toFixed(1)}" text-anchor="end">${p}</text>`).join('');
+  const yTicks=[100,70,45,0].map(p=>`<text class="sc-axis" x="${(PL-9).toFixed(1)}" y="${(Y(p)+3.5).toFixed(1)}" text-anchor="end">${p}</text>`).join('');
   const gridLines=[45,70].map(v=>
     `<line class="sc-grid" x1="${X(v).toFixed(1)}" y1="${PT}" x2="${X(v).toFixed(1)}" y2="${(H-PB).toFixed(1)}"/>`
     +`<line class="sc-grid" x1="${PL}" y1="${Y(v).toFixed(1)}" x2="${(W-PR).toFixed(1)}" y2="${Y(v).toFixed(1)}"/>`).join('');
@@ -2005,7 +2088,7 @@ function renderScatter() {
       : ` · ${txt('anchorOnly','앵커 점수 기준')}`;
     const tip = escapeHtml(`${pt.s.ticker} · ${pt.s.name} · ${txt('score','매력')} ${Math.round(pt.q)} / ${txt('entry','진입')} ${Math.round(pt.p)}${meta}`);
     dotSvg.push(`<circle class="sc-dot${pt.s.override?' override':''}" cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="${pt.r.toFixed(1)}" fill="${ACT_COLOR[pt.act]}" fill-opacity=".88" onclick="showDetail(${pt.s.id})"><title>${tip}</title></circle>`);
-    if (labeled >= 58) return;
+    if (labeled >= 46) return;
     const name = pt.s.ticker.length>7 ? pt.s.ticker.slice(0,6)+'…' : pt.s.ticker;
     const wpx = name.length*5.4 + 3;
     const spots = [
@@ -2031,8 +2114,8 @@ function renderScatter() {
   document.getElementById('scatter').innerHTML =
     `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="quality vs entry scatter">`
     + zones + gridLines + xTicks + yTicks
-    + `<text class="sc-axis-strong" transform="translate(16 ${(PT+ih/2).toFixed(1)}) rotate(-90)" text-anchor="middle">${txt('entryAppeal','진입 매력도')}</text>`
-    + dots + `</svg>`;
+    + `<text class="sc-axis-strong" transform="translate(16 ${(PT+ih/2).toFixed(1)}) rotate(-90)" text-anchor="middle">${txt('setupAxis','↑ 지금 사기 좋은 자리')}</text>`
+    + dots + zoneLabels.join('') + `</svg>`;
 }
 function renderTable() {
   const fs=marketSorted([...filtered()]);
@@ -2042,37 +2125,39 @@ function renderTable() {
   document.getElementById('table-meta').textContent = uiLang === 'en'
     ? `${fs.length} ${txt('stocks','stocks')} · ${marketLabel()}${marketLoadedAt ? ` · ${txt('price','price')} ${loadedCount}` : ''} · ${fundamentalsLabel()}${fundamentalsLoadedAt ? ` · ${txt('valueCount','value')} ${fundamentalsCount}${capText}` : ''}`
     : `총 ${fs.length}개 종목 · ${marketLabel()}${marketLoadedAt ? ` · 가격 ${loadedCount}개` : ''} · ${fundamentalsLabel()}${fundamentalsLoadedAt ? ` · 밸류 ${fundamentalsCount}개${capText}` : ''}`;
-  document.querySelectorAll('[data-market-view]').forEach(b=>b.classList.toggle('active', b.dataset.marketView === marketView));
-  const loadBtn = document.getElementById('market-load-btn');
-  loadBtn.textContent = marketLoading ? txt('loading','불러오는 중...') : (marketLoadedAt ? txt('marketRefresh','시장 데이터 새로고침') : txt('marketLoad','시장 데이터 로드'));
-  loadBtn.classList.toggle('loading', marketLoading);
-  const fundBtn = document.getElementById('fund-load-btn');
-  fundBtn.textContent = fundamentalsLoading ? txt('loading','불러오는 중...') : (fundamentalsLoadedAt ? txt('fundamentalsRefresh','밸류/의견 새로고침') : txt('fundamentalsLoad','밸류/의견 로드'));
-  fundBtn.classList.toggle('loading', fundamentalsLoading);
-  document.getElementById('tbody').innerHTML=fs.map(s=>{
+  const sel = document.getElementById('market-view-select');
+  if (sel && sel.value !== (marketView || '')) sel.value = marketView || '';
+  const shownRows = fs.slice(0, tableLimit);
+  const restRows = fs.length - shownRows.length;
+  document.getElementById('tbody').innerHTML=shownRows.map(s=>{
     const a=analyzed[s.ticker]; const act=getAction(s); const cls=CHIP_CLS[act];
+    const verdict = CELLS.find(c=>c.q===s.quality&&c.p===s.price);
     return`<tr class="row" onclick="showDetail(${s.id})">
       <td><span class="chip ${cls}">${s.ticker}${s.override?'*':''}</span></td>
       <td style="color:#888;font-size:11px">${s.name}</td>
       <td style="color:#aaa;font-size:11px">${s.sector}</td>
-      <td>${a?.qScore!=null?Math.round(a.qScore):'—'}</td>
-      <td>${a?.pScore!=null?Math.round(a.pScore):'—'}</td>
-      <td style="font-size:11px">${stockBandLabel(s.quality)}</td>
-      <td style="font-size:11px">${entryBandLabel(s.price)}</td>
+      <td style="font-variant-numeric:tabular-nums">${a?.qScore!=null?Math.round(a.qScore):'—'}</td>
+      <td style="font-variant-numeric:tabular-nums">${a?.pScore!=null?Math.round(a.pScore):'—'}</td>
+      <td><span class="chip ${cls}">${verdict?escapeHtml(cellLabel(verdict)):act}</span></td>
       ${marketCells(s)}
       ${fundamentalsCells(s)}
-      <td><span class="chip ${cls}">${act}</span></td>
     </tr>`;
-  }).join('');
+  }).join('') + (restRows>0
+    ? `<tr class="more-row"><td colspan="11"><button class="btn-ghost" onclick="showMoreRows()">+${restRows} ${txt('more','더보기')}</button></td></tr>`
+    : '');
+}
+function actionCounts() {
+  const c={buy:0,hold:0,watch:0,avoid:0};
+  sectorFiltered().forEach(s=>c[getAction(s)]++);
+  return c;
 }
 function renderStats() {
-  const fs=sectorFiltered(); const c={buy:0,hold:0,watch:0,avoid:0};
-  fs.forEach(s=>c[getAction(s)]++);
-  document.getElementById('stats-row').innerHTML=`
-    <div class="stat-card ${activeActionFilter==='buy'?'active':''}" style="color:#3B6D11" onclick="setActionFilter('buy')"><div class="stat-val">${c.buy}</div><div class="stat-lbl">Buy</div></div>
-    <div class="stat-card ${activeActionFilter==='hold'?'active':''}" style="color:#185FA5" onclick="setActionFilter('hold')"><div class="stat-val">${c.hold}</div><div class="stat-lbl">Hold</div></div>
-    <div class="stat-card ${activeActionFilter==='watch'?'active':''}" style="color:#854F0B" onclick="setActionFilter('watch')"><div class="stat-val">${c.watch}</div><div class="stat-lbl">Watch</div></div>
-    <div class="stat-card ${activeActionFilter==='avoid'?'active':''}" style="color:#A32D2D" onclick="setActionFilter('avoid')"><div class="stat-val">${c.avoid}</div><div class="stat-lbl">Avoid</div></div>`;
+  const c = actionCounts();
+  const defs=[['buy','#3B6D11',txt('actBuy','사도 됨')],['hold','#185FA5',txt('actHold','보유')],
+              ['watch','#854F0B',txt('actWatch','대기')],['avoid','#A32D2D',txt('actAvoid','피할 것')]];
+  document.getElementById('stats-row').innerHTML = defs.map(([k,col,label])=>
+    `<div class="vstat ${activeActionFilter===k?'active':''}" style="color:${col}" onclick="setActionFilter('${k}')"><b>${c[k]}</b><span>${label}</span></div>`
+  ).join('');
 }
 function applyLanguage() {
   document.documentElement.lang = uiLang;
@@ -2080,33 +2165,23 @@ function applyLanguage() {
   document.getElementById('lang-sub').textContent = uiLang === 'en' ? 'KO' : 'EN';
   renderStatus();
   document.getElementById('analyze-btn').textContent = isAnalyzing ? txt('analyzing','갱신 중...') : txt('analyze','↻ 시장 데이터 갱신');
-  document.querySelectorAll('.side-panel')[0].querySelector('.side-subtitle').textContent = txt('stockhubSub','뉴스·시장·리서치 컨텍스트 빠르게 확인');
-  const hubLinks = document.querySelectorAll('.link-grid .hub-link');
-  const hubCopy = [
-    [txt('news','뉴스'), txt('breaking','실시간 속보')],
-    [txt('market','시장'), txt('marketView','시장 한눈에')],
-    [txt('insights','인사이트'), txt('macroStocks','매크로/종목')],
-    [txt('research','리서치'), txt('factorSearch','팩터 검색')],
-    [txt('smartMoney','스마트머니'), txt('flows','13F/수급')],
-    [txt('calendar','일정'), txt('events','경제/실적')]
-  ];
-  hubLinks.forEach((a, i) => {
-    if (!hubCopy[i]) return;
-    a.innerHTML = `<b>${hubCopy[i][0]}</b>${hubCopy[i][1]}`;
-  });
-  document.querySelector('#today-follow-list').closest('.side-panel').querySelector('.side-title').textContent = txt('todayFollow','오늘의 팔로우업');
-  document.querySelector('#today-follow-list').closest('.side-panel').querySelector('.side-subtitle').textContent = txt('todayFollowSub','주도주 후보 중 눌림목을 기다릴 종목');
-  document.querySelector('#today-avoid-list').closest('.side-panel').querySelector('.side-title').textContent = txt('todayAvoid','오늘의 주의');
-  document.querySelector('#today-avoid-list').closest('.side-panel').querySelector('.side-subtitle').textContent = txt('todayAvoidSub','싸 보여도 수요가 약한 종목');
-  document.querySelector('#today-patience-list').closest('.side-panel').querySelector('.side-title').textContent = txt('todayPatience','좋지만 대기');
-  document.querySelector('#today-patience-list').closest('.side-panel').querySelector('.side-subtitle').textContent = txt('todayPatienceSub','좋은 종목이지만 추격보다 기다림');
-  document.querySelector('#missing-chart-list').closest('.side-panel').querySelector('.side-title').textContent = txt('missingSymbol','차트 심볼 미확인');
-  document.querySelector('#missing-chart-list').closest('.side-panel').querySelector('.side-subtitle').textContent = txt('missingSymbolSub','거래소 코드 확인 후 차트 표시 가능');
+  document.querySelector('.hub-row-label').textContent = 'StockHub';
+  const hubChips = document.querySelectorAll('.hub-chip');
+  [txt('news','뉴스'),txt('market','시장'),txt('insights','인사이트'),txt('research','리서치'),txt('smartMoney','스마트머니'),txt('calendar','일정')]
+    .forEach((label,i)=>{ if (hubChips[i]) hubChips[i].textContent = label; });
+  document.getElementById('verdict-kicker').textContent = txt('verdictKicker','오늘의 판단');
   document.getElementById('tab-pullback').textContent = tabLabels[uiLang].pullback;
   document.getElementById('tab-avoid').textContent = tabLabels[uiLang].avoid;
   document.getElementById('tab-patience').textContent = tabLabels[uiLang].patience;
   document.getElementById('tab-risk').textContent = tabLabels[uiLang].risk;
-  document.querySelector('.y-label-txt').textContent = uiLang === 'en' ? '← Entry appeal →' : '← 진입 매력 →';
+  document.querySelector('.y-label-txt').textContent = txt('setupAxis','↑ 지금 사기 좋은 자리');
+  const yt = document.querySelectorAll('.y-tick');
+  [txt('setupHigh','사기 좋음'),txt('setupMid','중립'),txt('setupLow','지금은 아님')].forEach((t,i)=>{ if(yt[i]) yt[i].textContent=t; });
+  const xl = document.querySelectorAll('.x-label');
+  [txt('pullWeak','관심 낮음'),txt('pullMid','보통'),txt('pullStrong','갖고 싶은 종목')].forEach((t,i)=>{ if(xl[i]) xl[i].textContent=t; });
+  const xb = document.querySelectorAll('.x-bottom div');
+  if (xb[0]) xb[0].textContent = txt('stockAxisLow','← 종목 점수 낮음');
+  if (xb[2]) xb[2].textContent = txt('stockAxisHigh','종목 점수 높음 →');
   document.getElementById('matrix-title').textContent = txt('tasteMap','테이스트 맵');
   document.getElementById('view-grid').textContent = txt('viewGrid','격자');
   document.getElementById('view-scatter').textContent = txt('viewScatter','산점도');
@@ -2115,22 +2190,19 @@ function applyLanguage() {
   document.getElementById('lg-watch').textContent = txt('legendWatch','Watch');
   document.getElementById('lg-avoid').textContent = txt('legendAvoid','Avoid');
   document.getElementById('sc-hint').textContent = txt('scatterHint','점 하나가 종목 하나. 실제 (매력, 진입) 좌표에 찍힌다. 클릭하면 열린다.');
-  document.querySelectorAll('.score-label span:first-child')[0].textContent = txt('stockQuality','종목 매력도');
-  document.querySelectorAll('.score-label span:first-child')[1].textContent = txt('entryAppeal','진입 매력도');
+  document.querySelectorAll('.score-label span:first-child')[0].textContent = txt('stockQuality','종목 점수 — 얼마나 갖고 싶은 종목인가');
+  document.querySelectorAll('.score-label span:first-child')[1].textContent = txt('entryAppeal','자리 점수 — 지금 사기 좋은 자리인가');
   document.getElementById('ai-box').textContent = selectedId ? document.getElementById('ai-box').textContent : txt('noAnalysis','분석 없음');
-  document.querySelectorAll('.field-lbl')[0].textContent = txt('manualQuality','종목 매력 수동 조정');
-  document.querySelectorAll('.field-lbl')[1].textContent = txt('manualEntry','진입 매력 수동 조정');
+  document.querySelectorAll('.field-lbl')[0].textContent = txt('manualQuality','종목 점수 수동 조정');
+  document.querySelectorAll('.field-lbl')[1].textContent = txt('manualEntry','자리 점수 수동 조정');
   document.querySelectorAll('.oa-actions button')[0].textContent = txt('save','저장');
   document.querySelectorAll('.oa-actions button')[1].textContent = txt('resetClass','분류 리셋');
   document.querySelectorAll('.oa-actions button')[2].textContent = txt('delete','삭제');
-  const marketButtons = document.querySelectorAll('.table-actions .btn-ghost');
-  marketButtons[1].textContent = txt('changeSort','24h 변화순');
-  marketButtons[2].textContent = txt('high52','52주 신고가 근처');
-  marketButtons[3].textContent = txt('emaAbove','100EMA 위');
-  marketButtons[4].textContent = txt('emaBelow','100EMA 아래');
-  marketButtons[6].textContent = txt('targetUpside','목표가 여력순');
-  marketButtons[7].textContent = txt('clear','해제');
-  document.querySelector('thead tr').innerHTML = `<th>${txt('ticker','티커')}</th><th>${txt('company','회사명')}</th><th>${txt('sector','섹터')}</th><th>${txt('score','매력')}</th><th>${txt('entry','진입')}</th><th>${txt('stock','종목')}</th><th>${txt('setup','상황')}</th><th>${txt('dataDate','기준일')}</th><th>24h</th><th>52W</th><th>100EMA</th><th>${txt('value','밸류')}</th><th>${txt('street','증권가')}</th><th>${txt('action','액션')}</th>`;
+  const opts = document.querySelectorAll('#market-view-select option');
+  [txt('sortDefault','정렬 · 기본'),txt('changeSort','24h 변화순'),txt('high52','52주 신고가 근처'),
+   txt('emaAbove','100EMA 위만'),txt('emaBelow','100EMA 아래만'),txt('targetUpside','목표가 여력순')]
+    .forEach((t,i)=>{ if(opts[i]) opts[i].textContent = t; });
+  document.querySelector('thead tr').innerHTML = `<th>${txt('ticker','티커')}</th><th>${txt('company','회사명')}</th><th>${txt('sector','섹터')}</th><th title="${txt('stockQuality','종목 점수 — 얼마나 갖고 싶은 종목인가')}">${txt('scoreStock','종목')}</th><th title="${txt('entryAppeal','자리 점수 — 지금 사기 좋은 자리인가')}">${txt('scoreSetup','자리')}</th><th>${txt('verdict','판정')}</th><th>24h</th><th>${txt('w52','52주')}</th><th>100EMA</th><th>${txt('value','밸류')}</th><th>${txt('target','목표가')}</th>`;
 }
 
 function toggleLanguage() {
@@ -2150,7 +2222,7 @@ function render(){applyLanguage();renderSectors();renderStats();renderPicks();re
 // 부팅: 앵커로 즉시 분류해 빈 화면을 없애고, 시장 데이터가 오면 좌표를 다시 잡는다.
 classifyAll();
 render();
-loadMarketData();
+loadMarketData().then(()=>loadFundamentals(true));
 </script>
 </body>
 </html>
