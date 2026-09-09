@@ -1,0 +1,5 @@
+.vercel
+.claude
+.DS_Store
+index.backup-*.html
+node_modules

@@ -1,8 +1,8 @@
 {
-  "name": "matrix",
-  "private": true,
+  "name": "matrix-ruddy-ten",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
-    "build": "mkdir -p dist && cp index.html dist/index.html"
+    "check": "node -e \"const fs=require('fs'); const html=fs.readFileSync('index.html','utf8'); if (/sk-ant|api\\.anthropic\\.com|\\/api\\/analyze/.test(html)) process.exit(1); const opens=[...html.matchAll(/<script\\\\b/g)].length; const closes=[...html.matchAll(/<\\\\/script>/g)].length; if (opens !== 2 || closes !== 1) process.exit(1); new Function(html.match(/<script>([\\\\s\\\\S]*)<\\\\/script>/)[1]);\""
   }
 }
