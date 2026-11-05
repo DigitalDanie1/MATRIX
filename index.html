@@ -218,6 +218,56 @@ tr.row:hover td{background:#f8f8f8}
 .vstat span{display:block;font-size:14px;color:#5e5e5e;margin-top:6px}
 .vstat i{display:block;font-style:normal;font-size:12px;color:#9a9a9a;margin-top:3px}
 .verdict .tabs{padding:22px 24px 0;align-items:center}
+
+/* ── 2026 refresh: 결론을 먼저 읽고, 다음 행동으로 이어지게 ── */
+.header{position:sticky;top:12px;z-index:20;padding:10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.07)}
+.header .brand-mark{width:44px;height:44px;border-radius:13px}
+.header .title{font-size:24px}
+.header .subtitle{font-size:13px}
+.verdict{box-shadow:0 14px 34px rgba(17,17,17,.055)}
+.verdict-head{background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(247,250,243,.98));padding-bottom:18px}
+.verdict-head .eyebrow{color:#3B6D11;margin-bottom:9px}
+.verdict-line{font-size:clamp(25px,3vw,38px);max-width:27em;letter-spacing:-.04em}
+.verdict-line em{color:#3B6D11}
+.verdict-stats{padding-top:0;background:#fff}
+.vstat{min-height:104px}
+.vstat b{font-size:36px}
+.vstat:first-child{border-color:#C0DD97;background:#F8FCEF}
+.verdict .tabs{padding-top:16px}
+.picks-section{box-shadow:0 10px 28px rgba(17,17,17,.035)}
+.table-section{box-shadow:0 10px 28px rgba(17,17,17,.035)}
+th{position:sticky;top:68px;z-index:5;box-shadow:0 1px 0 #e5e5e5}
+td:first-child,th:first-child{padding-left:18px}
+td:first-child{font-weight:800;color:#111}
+@media (max-width:900px){
+  body{padding:12px}
+  .header{top:8px}
+  .verdict-head{padding:20px 18px 16px}
+  .verdict-stats{grid-template-columns:repeat(2,1fr);padding:0 18px}
+  .verdict .tabs{padding:16px 18px 0;overflow-x:auto}
+  .vstat{min-height:88px;padding:13px 14px}
+  .vstat b{font-size:29px}
+  .matrix-section,.table-tools{padding:18px}
+  .matrix{height:500px}
+  .y-ticks{height:500px}
+}
+@media (max-width:600px){
+  body::before{font-size:88px;right:-58px;top:120px}
+  .header{align-items:flex-start}
+  .header .toolbar{width:100%;justify-content:space-between}
+  .header .title{font-size:21px}
+  .header .subtitle{font-size:12px}
+  .verdict-line{font-size:25px}
+  .verdict-stats{gap:7px}
+  .vstat span{font-size:12px}
+  .vstat i{font-size:11px}
+  .matrix-head{gap:12px}
+  .matrix-title{font-size:21px}
+  .matrix-outer{min-width:640px}
+  .matrix-section{overflow-x:auto}
+  .detail-links{grid-template-columns:repeat(2,1fr)}
+  th{top:62px}
+}
 .verdict-foot{padding:0 24px 20px;font-size:13px;color:#8a8a8a;line-height:1.55}
 .verdict .picks-grid{padding:16px 24px 18px;gap:14px}
 .hub-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:14px;padding:11px 14px;background:rgba(255,255,255,.7);border:1px solid #ececec;border-radius:12px}
